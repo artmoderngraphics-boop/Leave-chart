@@ -1,0 +1,588 @@
+{
+  "app": "leave-chart",
+  "version": 1,
+  "updatedAt": "2026-09-11T08:35:47.034Z",
+  "staff": [
+    "Zameer",
+    "Jamil",
+    "Amjet",
+    "Akram",
+    "Manoj",
+    "Sajeewan",
+    "Praweena",
+    "Darshan",
+    "Fazha",
+    "Anuradha"
+  ],
+  "leaves": [
+    {
+      "id": "L01",
+      "name": "Zameer",
+      "from": "2026-01-05",
+      "to": "2026-01-06",
+      "days": 2,
+      "type": "annual",
+      "reason": "Family trip",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L02",
+      "name": "Zameer",
+      "from": "2026-04-13",
+      "to": "2026-04-14",
+      "days": 2,
+      "type": "annual",
+      "reason": "Avurudu",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L03",
+      "name": "Zameer",
+      "from": "2026-07-20",
+      "to": "2026-07-20",
+      "days": 1,
+      "type": "sick",
+      "reason": "Fever",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L04",
+      "name": "Zameer",
+      "from": "2026-10-20",
+      "to": "2026-10-22",
+      "days": 3,
+      "type": "annual",
+      "reason": "Family wedding",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L05",
+      "name": "Jamil",
+      "from": "2026-02-10",
+      "to": "2026-02-10",
+      "days": 1,
+      "type": "sick",
+      "reason": "Medical",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L06",
+      "name": "Jamil",
+      "from": "2026-05-15",
+      "to": "2026-05-15",
+      "days": 1,
+      "type": "casual",
+      "reason": "Personal work",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L07",
+      "name": "Jamil",
+      "from": "2026-09-10",
+      "to": "2026-09-12",
+      "days": 3,
+      "type": "sick",
+      "reason": "Flu",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L08",
+      "name": "Jamil",
+      "from": "2026-11-05",
+      "to": "2026-11-05",
+      "days": 1,
+      "type": "annual",
+      "reason": "Family event",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L09",
+      "name": "Amjet",
+      "from": "2026-03-02",
+      "to": "2026-03-03",
+      "days": 2,
+      "type": "annual",
+      "reason": "Trip",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L10",
+      "name": "Amjet",
+      "from": "2026-06-18",
+      "to": "2026-06-18",
+      "days": 1,
+      "type": "casual",
+      "reason": "Personal",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L11",
+      "name": "Amjet",
+      "from": "2026-09-11",
+      "to": "2026-09-11",
+      "days": 1,
+      "type": "annual",
+      "reason": "Private matter",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L12",
+      "name": "Amjet",
+      "from": "2026-12-15",
+      "to": "2026-12-16",
+      "days": 2,
+      "type": "annual",
+      "reason": "Year-end trip",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L13",
+      "name": "Akram",
+      "from": "2026-01-20",
+      "to": "2026-01-20",
+      "days": 1,
+      "type": "casual",
+      "reason": "Personal",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L14",
+      "name": "Akram",
+      "from": "2026-08-03",
+      "to": "2026-08-04",
+      "days": 2,
+      "type": "sick",
+      "reason": "Medical",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L15",
+      "name": "Akram",
+      "from": "2026-10-05",
+      "to": "2026-10-06",
+      "days": 2,
+      "type": "annual",
+      "reason": "Family visit",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L16",
+      "name": "Manoj",
+      "from": "2026-04-02",
+      "to": "2026-04-02",
+      "days": 1,
+      "type": "annual",
+      "reason": "Personal",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L17",
+      "name": "Manoj",
+      "from": "2026-07-10",
+      "to": "2026-07-10",
+      "days": 1,
+      "type": "sick",
+      "reason": "Fever",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L18",
+      "name": "Manoj",
+      "from": "2026-09-25",
+      "to": "2026-09-26",
+      "days": 2,
+      "type": "annual",
+      "reason": "Wedding",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L19",
+      "name": "Sajeewan",
+      "from": "2026-02-14",
+      "to": "2026-02-14",
+      "days": 1,
+      "type": "annual",
+      "reason": "Personal",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L20",
+      "name": "Sajeewan",
+      "from": "2026-05-20",
+      "to": "2026-05-21",
+      "days": 2,
+      "type": "sick",
+      "reason": "Medical",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L21",
+      "name": "Sajeewan",
+      "from": "2026-11-10",
+      "to": "2026-11-12",
+      "days": 3,
+      "type": "annual",
+      "reason": "Trip",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L22",
+      "name": "Praweena",
+      "from": "2026-03-15",
+      "to": "2026-03-15",
+      "days": 1,
+      "type": "sick",
+      "reason": "Medical",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L23",
+      "name": "Praweena",
+      "from": "2026-06-05",
+      "to": "2026-06-06",
+      "days": 2,
+      "type": "annual",
+      "reason": "Family trip",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L24",
+      "name": "Praweena",
+      "from": "2026-09-08",
+      "to": "2026-09-08",
+      "days": 1,
+      "type": "casual",
+      "reason": "Personal",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L25",
+      "name": "Praweena",
+      "from": "2026-10-12",
+      "to": "2026-10-12",
+      "days": 1,
+      "type": "annual",
+      "reason": "Event",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L26",
+      "name": "Darshan",
+      "from": "2026-01-12",
+      "to": "2026-01-12",
+      "days": 1,
+      "type": "annual",
+      "reason": "Personal",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L27",
+      "name": "Darshan",
+      "from": "2026-07-25",
+      "to": "2026-07-25",
+      "days": 1,
+      "type": "casual",
+      "reason": "Personal work",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L28",
+      "name": "Darshan",
+      "from": "2026-12-01",
+      "to": "2026-12-03",
+      "days": 3,
+      "type": "annual",
+      "reason": "Year-end holiday",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L29",
+      "name": "Fazha",
+      "from": "2026-04-25",
+      "to": "2026-04-25",
+      "days": 1,
+      "type": "sick",
+      "reason": "Medical",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L30",
+      "name": "Fazha",
+      "from": "2026-08-20",
+      "to": "2026-08-21",
+      "days": 2,
+      "type": "annual",
+      "reason": "Family visit",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L31",
+      "name": "Fazha",
+      "from": "2026-09-30",
+      "to": "2026-10-01",
+      "days": 2,
+      "type": "annual",
+      "reason": "Trip",
+      "status": "pending",
+      "created": 1789115747034
+    },
+    {
+      "id": "L32",
+      "name": "Fazha",
+      "from": "2026-11-20",
+      "to": "2026-11-20",
+      "days": 1,
+      "type": "annual",
+      "reason": "Event",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L33",
+      "name": "Anuradha",
+      "from": "2026-02-28",
+      "to": "2026-02-28",
+      "days": 1,
+      "type": "casual",
+      "reason": "Personal",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L34",
+      "name": "Anuradha",
+      "from": "2026-06-30",
+      "to": "2026-07-01",
+      "days": 2,
+      "type": "annual",
+      "reason": "Family trip",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L35",
+      "name": "Anuradha",
+      "from": "2026-10-30",
+      "to": "2026-10-30",
+      "days": 1,
+      "type": "casual",
+      "reason": "Personal work",
+      "status": "pending",
+      "created": 1789115747034
+    }
+  ],
+  "holidays": [
+    {
+      "id": "Hseed0",
+      "d": "2026-01-03",
+      "en": "Duruthu Full Moon Poya Day",
+      "si": "දුරුතු පුර පසළොස්වක පෝය දිනය",
+      "ta": "துருத்து முழுநிலவு போயா தினம்"
+    },
+    {
+      "id": "Hseed1",
+      "d": "2026-01-15",
+      "en": "Tamil Thai Pongal Day",
+      "si": "දමිළ තෛපොංගල් දිනය",
+      "ta": "தமிழ் தைப்பொங்கல் தினம்"
+    },
+    {
+      "id": "Hseed2",
+      "d": "2026-02-01",
+      "en": "Navam Full Moon Poya Day",
+      "si": "නවම් පුර පසළොස්වක පෝය දිනය",
+      "ta": "நவம் முழுநிலவு போயா தினம்"
+    },
+    {
+      "id": "Hseed3",
+      "d": "2026-02-04",
+      "en": "Independence Day",
+      "si": "නිදහස් දිනය",
+      "ta": "சுதந்திர தினம்"
+    },
+    {
+      "id": "Hseed4",
+      "d": "2026-02-15",
+      "en": "Maha Sivarathri Day",
+      "si": "මහා ශිවරාත්‍රී දිනය",
+      "ta": "மகா சிவராத்திரி தினம்"
+    },
+    {
+      "id": "Hseed5",
+      "d": "2026-03-02",
+      "en": "Medin Full Moon Poya Day",
+      "si": "මැදින් පුර පසළොස්වක පෝය දිනය",
+      "ta": "மெதின் முழுநிலவு போயா தினம்"
+    },
+    {
+      "id": "Hseed6",
+      "d": "2026-03-21",
+      "en": "Id-Ul-Fitr (Ramazan Festival Day)",
+      "si": "ඊදුල්-ෆිත්ර් (රමසාන් උත්සව දිනය)",
+      "ta": "ஈதுல்-பித்ர் (ரம்ஸான் பண்டிகை தினம்)"
+    },
+    {
+      "id": "Hseed7",
+      "d": "2026-04-01",
+      "en": "Bak Full Moon Poya Day",
+      "si": "බක් පුර පසළොස්වක පෝය දිනය",
+      "ta": "பக் முழுநிலவு போயா தினம்"
+    },
+    {
+      "id": "Hseed8",
+      "d": "2026-04-03",
+      "en": "Good Friday",
+      "si": "මහ සිකුරාදා",
+      "ta": "புனித வெள்ளி"
+    },
+    {
+      "id": "Hseed9",
+      "d": "2026-04-13",
+      "en": "Day Prior to Sinhala & Tamil New Year Day",
+      "si": "සිංහල හා දමිළ අලුත් අවුරුද්දට පෙර දිනය",
+      "ta": "சிங்கள தமிழ் புத்தாண்டுக்கு முந்தைய தினம்"
+    },
+    {
+      "id": "Hseed10",
+      "d": "2026-04-14",
+      "en": "Sinhala & Tamil New Year Day",
+      "si": "සිංහල හා දමිළ අලුත් අවුරුදු දිනය",
+      "ta": "சிங்கள தமிழ் புத்தாண்டு தினம்"
+    },
+    {
+      "id": "Hseed11",
+      "d": "2026-05-01",
+      "en": "Vesak Full Moon Poya Day",
+      "si": "වෙසක් පුර පසළොස්වක පෝය දිනය",
+      "ta": "வெசாக் முழுநிலவு போயா தினம்"
+    },
+    {
+      "id": "Hseed12",
+      "d": "2026-05-01",
+      "en": "May Day (International Workers' Day)",
+      "si": "මැයි දිනය (ජාත්‍යන්තර කම්කරු දිනය)",
+      "ta": "மே தினம் (சர்வதேச தொழிலாளர் தினம்)"
+    },
+    {
+      "id": "Hseed13",
+      "d": "2026-05-02",
+      "en": "Day Following Vesak Full Moon Poya Day",
+      "si": "වෙසක් පෝයට පසු දිනය",
+      "ta": "வெசாக் போயாவுக்கு அடுத்த தினம்"
+    },
+    {
+      "id": "Hseed14",
+      "d": "2026-05-28",
+      "en": "Id-Ul-Alha (Hadji Festival Day)",
+      "si": "ඊදුල්-අල්හා (හජ්ජි උත්සව දිනය)",
+      "ta": "ஈதுல்-அல்ஹா (ஹஜ் பண்டிகை தினம்)"
+    },
+    {
+      "id": "Hseed15",
+      "d": "2026-05-30",
+      "en": "Adhi Poson Full Moon Poya Day",
+      "si": "අධි පොසොන් පුර පසළොස්වක පෝය දිනය",
+      "ta": "அதி பொசொன் முழுநிலவு போயா தினம்"
+    },
+    {
+      "id": "Hseed16",
+      "d": "2026-06-29",
+      "en": "Poson Full Moon Poya Day",
+      "si": "පොසොන් පුර පසළොස්වක පෝය දිනය",
+      "ta": "பொசொன் முழுநிலவு போயா தினம்"
+    },
+    {
+      "id": "Hseed17",
+      "d": "2026-07-29",
+      "en": "Esala Full Moon Poya Day",
+      "si": "ඇසළ පුර පසළොස්වක පෝය දිනය",
+      "ta": "எசல முழுநிலவு போயா தினம்"
+    },
+    {
+      "id": "Hseed18",
+      "d": "2026-08-26",
+      "en": "Milad-Un-Nabi (Holy Prophet's Birthday)",
+      "si": "මිලාදුන්-නබි (නබිතුමාගේ උපන් දිනය)",
+      "ta": "மிலாதுன்-நபி (நபிகள் பிறந்த தினம்)"
+    },
+    {
+      "id": "Hseed19",
+      "d": "2026-08-27",
+      "en": "Nikini Full Moon Poya Day",
+      "si": "නිකිණි පුර පසළොස්වක පෝය දිනය",
+      "ta": "நிக்கினி முழுநிலவு போயா தினம்"
+    },
+    {
+      "id": "Hseed20",
+      "d": "2026-09-26",
+      "en": "Binara Full Moon Poya Day",
+      "si": "බිනර පුර පසළොස්වක පෝය දිනය",
+      "ta": "பினர முழுநிலவு போயா தினம்"
+    },
+    {
+      "id": "Hseed21",
+      "d": "2026-10-25",
+      "en": "Vap Full Moon Poya Day",
+      "si": "වප් පුර පසළොස්වක පෝය දිනය",
+      "ta": "வப் முழுநிலவு போயா தினம்"
+    },
+    {
+      "id": "Hseed22",
+      "d": "2026-11-08",
+      "en": "Deepavali Festival Day",
+      "si": "දීපාවලි උත්සව දිනය",
+      "ta": "தீபாவளி பண்டிகை தினம்"
+    },
+    {
+      "id": "Hseed23",
+      "d": "2026-11-24",
+      "en": "Ill Full Moon Poya Day",
+      "si": "ඉල් පුර පසළොස්වක පෝය දිනය",
+      "ta": "இல் முழுநிலவு போயா தினம்"
+    },
+    {
+      "id": "Hseed24",
+      "d": "2026-12-23",
+      "en": "Unduvap Full Moon Poya Day",
+      "si": "උඳුවප් පුර පසළොස්වක පෝය දිනය",
+      "ta": "உந்துவப் முழுநிலவு போயா தினம்"
+    },
+    {
+      "id": "Hseed25",
+      "d": "2026-12-25",
+      "en": "Christmas Day",
+      "si": "නත්තල් දිනය",
+      "ta": "நத்தார் தினம்"
+    }
+  ]
+}
