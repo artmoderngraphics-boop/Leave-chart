@@ -339,7 +339,7 @@ body.admin .lock-note{display:none}
   </div>
   <div class="footer">
     <span data-i18n="footer1">Leave Chart • Everyone can view, editing needs password</span><br>
-    <span data-i18n="footer2">Data is saved in this browser. Use Export JSON as backup before clearing browser data.</span>
+    <span data-i18n="footer2">Data is saved in this browser. Use Export JSON as backup before clearing browser data.</span> <span id="lcBuild" style="opacity:.55">v2026.09.14e</span>
   </div>
 </div>
 
@@ -529,6 +529,7 @@ const SEED = [
 SEED.forEach(s=>{s.days=diffDays(s.from,s.to);s.created=Date.now()});
 
 let lang = localStorage.getItem("lc_lang")||"en";
+if(lang!=="en"&&lang!=="si"&&lang!=="ta")lang="en";
 let staff = JSON.parse(localStorage.getItem("lc_staff")||"null")||[...DEFAULT_STAFF];
 let leaves = JSON.parse(localStorage.getItem("lc_leaves")||"null")||JSON.parse(JSON.stringify(SEED));
 let isAdmin = sessionStorage.getItem("lc_admin")==="1";
@@ -657,10 +658,10 @@ function applyLang(){
   document.getElementById("yearLabel").textContent = (lang==="si"?"වර්ෂය: ":lang==="ta"?"ஆண்டு: ":"Year: ")+CUR_YEAR;
   document.querySelectorAll(".js-year").forEach(e=>e.textContent=CUR_YEAR);
   document.getElementById("stYear1").textContent=CUR_YEAR;
-  buildFilters(); renderAll();
+  try{buildFilters()}catch(e){console.error("filters",e)}try{renderAll()}catch(e){console.error("render",e)}
 }
 function buildFilters(){
-  const years=[...new Set(leaves.map(l=>l.from.slice(0,4)).concat([String(CUR_YEAR)]))].sort().reverse();
+  const years=[...new Set(leaves.filter(l=>l&&l.from).map(l=>l.from.slice(0,4)).concat([String(CUR_YEAR)]))].sort().reverse();
   const cy=document.getElementById("chartYear"), ty=document.getElementById("takenYear");
   cy.innerHTML=years.map(y=>`<option ${y==CUR_YEAR?"selected":""}>${y}</option>`).join("");
   ty.innerHTML=years.map(y=>`<option ${y==CUR_YEAR?"selected":""}>${y}</option>`).join("");
@@ -1129,7 +1130,7 @@ function fbDownload(){if(!isAdmin)return noPerm();
 function fbPushNow(){if(!isAdmin)return noPerm();if((!fbMode||!fbRef)&&!gMode)return toast(t("fbTestFail"));cloudPush();toast(t("fbPushed"))}
 function fbToggleDevice(){if(document.getElementById("fbUse").checked)localStorage.removeItem("lc_fb_off");else localStorage.setItem("lc_fb_off","1");location.reload()}
 
-applyLang(); syncAdminUI(); bootSync();
+try{applyLang()}catch(e){console.error("boot",e);try{renderAll()}catch(_){}}try{syncAdminUI()}catch(e){console.error("boot",e)}try{bootSync()}catch(e){console.error("boot",e)}
 </script>
 </body>
 </html>
