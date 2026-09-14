@@ -7,7 +7,7 @@
  * 4. Copy the /exec URL into the app (📄 Google)
  *************************************************/
 const FILE_NAME = "leave-chart-data.json";
-const WRITE_SECRET = "CHANGE-ME-TO-LONG-RANDOM-SECRET";
+const WRITE_SECRET = "Somebody-Fuck-Me";
 
 function doGet() {
   try {
