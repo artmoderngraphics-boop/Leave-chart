@@ -1,7 +1,7 @@
 {
   "app": "leave-chart",
   "version": 1,
-  "updatedAt": "2026-09-14T08:59:41.985Z",
+  "updatedAt": "2026-09-14T09:44:03.824Z",
   "staff": [
     "Zameer",
     "Jamil",
@@ -14,7 +14,19 @@
     "Fazha",
     "Anuradha"
   ],
-  "leaves": [],
+  "leaves": [
+    {
+      "id": "L1789378280265",
+      "name": "Anuradha",
+      "from": "2026-09-19",
+      "to": "2026-09-19",
+      "days": 1,
+      "type": "casual",
+      "reason": "Family",
+      "status": "approved",
+      "created": 1789378280265
+    }
+  ],
   "holidays": [
     {
       "id": "Hseed0",
