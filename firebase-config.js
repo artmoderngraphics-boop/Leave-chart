@@ -4,8 +4,8 @@
 // Get values: https://console.firebase.google.com → Project settings (Web app) + Realtime Database URL.
 window.FIREBASE_CONFIG = {
   "enabled": false,
-  "apiKey": "AIzaSyDk4WU0elPW9P4FiSAcH-aDnv8vzhUhtqE",
-  "authDomain": "leave-chart-ace28.firebaseapp.com",
-  "databaseURL": "https://leave-chart-ace28-default-rtdb.asia-southeast1.firebasedatabase.app",
-  "projectId": "leave-chart-ace28"
+  "apiKey": "",
+  "authDomain": "",
+  "databaseURL": "",
+  "projectId": ""
 };

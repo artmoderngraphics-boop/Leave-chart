@@ -7,6 +7,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <script src="firebase-config.js"></script>
+<script src="google-config.js"></script>
 <title>Staff Leave Chart 2026 | නිවාඩු සටහන | விடுப்பு அட்டவணை</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -120,6 +121,14 @@ tr:hover td{background:#f8faff}
 #toast.show{transform:translateX(-50%) translateY(0)}
 .footer{text-align:center;color:var(--muted);font-size:12.5px;margin-top:18px;line-height:1.7}
 .admin-only{display:none!important}
+.need-leave{display:none!important}
+body.role-admin .need-leave,body.role-entry .need-leave{display:inline-flex!important}
+.need-sched{display:none!important}
+body.logged .need-sched{display:inline-flex!important}
+.need-scheddel{display:none!important}
+body.role-admin .need-scheddel,body.role-scheduler .need-scheddel{display:inline-flex!important}
+.logged-only{display:none!important}
+body.logged .logged-only{display:inline-flex!important}
 body.admin .admin-only{display:inline-flex!important}
 body.admin .row-actions.admin-only{display:flex!important}
 .lock-note{background:#fffbeb;border:1px dashed #f59e0b;border-radius:12px;padding:10px 14px;font-size:13px;margin-bottom:12px;color:#92400e}
@@ -145,6 +154,7 @@ body.admin .lock-note{display:none}
 .cal-hol{font-size:9px;font-weight:700;color:#854d0e;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
 .cal-day.leave .cal-hol{color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.5)}
 .cal-badge{position:absolute;bottom:4px;right:5px;background:#0f172a;color:#fff;font-size:10px;font-weight:800;border-radius:999px;padding:1px 7px;line-height:1.5}
+.cal-sch{position:absolute;bottom:4px;left:5px;background:#1d4ed8;color:#fff;font-size:10px;font-weight:800;border-radius:999px;padding:1px 7px;line-height:1.5}
 .legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;font-size:12px;font-weight:600;color:var(--muted)}
 .sw{width:14px;height:14px;border-radius:4px;display:inline-block;vertical-align:-2px;margin-right:4px;border:1px solid rgba(0,0,0,.2)}
 .cal-detail{margin-top:10px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px}
@@ -197,6 +207,7 @@ body.admin .lock-note{display:none}
       <button class="tab-btn" data-tab="taken">✅ <span data-i18n="takenTab">Taken</span></button>
       <button class="tab-btn" data-tab="upcoming">🗓️ <span data-i18n="upcomingTab">Upcoming</span></button>
       <button class="tab-btn" data-tab="team">👥 <span data-i18n="team">Team</span></button>
+      <button class="tab-btn" data-tab="sched">🛠️ <span data-i18n="schedTab">Schedule</span></button>
     </div>
     <div class="tab-body">
 
@@ -204,7 +215,7 @@ body.admin .lock-note{display:none}
         <h2 class="print-title">Dashboard</h2>
         <div class="lock-note">🔒 <span data-i18n="lockNote">Everyone can view. To add / edit / delete, press “Edit Login” and enter the password.</span></div>
         <div class="toolbar">
-          <button class="btn btn-primary btn-sm" onclick="requireAdmin(openLeaveModal)">➕ <span data-i18n="addLeave">Add Leave</span></button>
+          <button class="btn btn-primary btn-sm" onclick="requireLeave(openLeaveModal)">➕ <span data-i18n="addLeave">Add Leave</span></button>
           <button class="btn btn-ghost btn-sm admin-only" onclick="openStaffModal()">👤 <span data-i18n="addStaff">Add Staff</span></button>
           <button class="btn btn-ghost btn-sm" onclick="exportCSV()">⬇️ CSV</button>
           <button class="btn btn-ghost btn-sm admin-only" onclick="exportJSON()">⬆️ data.json</button>
@@ -214,8 +225,10 @@ body.admin .lock-note{display:none}
           <button class="btn btn-ghost btn-sm admin-only" onclick="document.getElementById('importFile').click()">⬆️ JSON</button>
           <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(event)">
           <button class="btn btn-ghost btn-sm" onclick="window.print()">🖨️ <span data-i18n="print">Print</span></button>
+          <button class="btn btn-ghost btn-sm admin-only" onclick="openGModal()">📄 Google</button>
           <button class="btn btn-ghost btn-sm admin-only" onclick="openFbModal()">🔥 Firebase</button>
-          <button class="btn btn-ghost btn-sm admin-only" onclick="openPassModal()">🔑 <span data-i18n="changePass">Password</span></button>
+          <button class="btn btn-ghost btn-sm logged-only" onclick="openPassModal()">🔑 <span data-i18n="changePass">Password</span></button>
+          <button class="btn btn-ghost btn-sm admin-only" onclick="openUsersModal()">👥 <span data-i18n="usersTitle">Users</span></button>
           <button class="btn btn-ghost btn-sm admin-only" onclick="resetDemo()">↩️ <span data-i18n="reset">Reset</span></button>
         </div>
         <div class="card" style="margin-bottom:14px">
@@ -237,6 +250,7 @@ body.admin .lock-note{display:none}
             <span><span class="sw" style="background:linear-gradient(135deg,#fef86e,#facc15)"></span><span data-i18n="lgHol">Sunday / Government holiday</span></span>
             <span><span class="sw" style="background:#fffbeb;border:1.5px dashed #f59e0b"></span><span data-i18n="lgPend">Pending leave</span></span>
             <span><span class="sw" style="background:#fff;box-shadow:0 0 0 2px var(--brand1)"></span><span data-i18n="lgToday">Today</span></span>
+            <span><span class="sw" style="background:#1d4ed8"></span><span data-i18n="lgSched">Work schedule</span></span>
           </div>
           <div class="cal-detail" id="calDetail"></div>
           <div class="hint" style="margin-top:8px">ℹ️ <span data-i18n="slHolNote">Sri Lanka government holidays 2026 included</span></div>
@@ -303,7 +317,22 @@ body.admin .lock-note{display:none}
           <button class="btn btn-primary btn-sm" onclick="requireAdmin(openStaffModal)">➕ <span data-i18n="addStaff">Add Staff</span></button>
           <span class="hint" data-i18n="teamHint">Click a name card to see that person's leaves.</span>
         </div>
-        <div class="staff-grid" id="staffGrid"></div>
+                <div class="staff-grid" id="staffGrid"></div>
+      </div>
+
+      <div class="panel" id="panel-sched">
+        <h2 class="print-title">Work Schedule</h2>
+        <div class="toolbar">
+          <button class="btn btn-primary btn-sm" onclick="requireSched(openSchedModal)">➕ <span data-i18n="addSched">Add Schedule</span></button>
+          <input class="grow" id="sSearch" data-i18n-ph="schedSearchPh" placeholder="🔍 Search name / note..." oninput="renderSched()">
+          <select id="sName" onchange="renderSched()"></select>
+          <select id="sShift" onchange="renderSched()"></select>
+          <input type="month" id="sMonth" onchange="renderSched()" style="border:1.5px solid var(--line);border-radius:10px;padding:9px 12px;font-size:13.5px;font-family:inherit">
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th data-i18n="thDate">Date</th><th data-i18n="thName">Name</th><th data-i18n="thShift">Shift</th><th data-i18n="thNote">Note</th><th class="no-print" data-i18n="thAction">Action</th></tr></thead>
+          <tbody id="schedBody"></tbody>
+        </table></div>
       </div>
 
     </div>
@@ -318,6 +347,7 @@ body.admin .lock-note{display:none}
 <div class="modal-back" id="mLogin"><div class="modal">
   <div class="modal-head"><h3>🔐 <span data-i18n="loginTitle">Editor Login</span></h3><button class="modal-x" onclick="closeModal('mLogin')">✕</button></div>
   <div class="modal-body">
+    <div class="field"><label data-i18n="loginUser">User</label><select id="loginUser"></select></div>
     <div class="field"><label data-i18n="password">Password</label><input type="password" id="loginPass" data-i18n-ph="passPh" placeholder="Enter edit password" onkeydown="if(event.key==='Enter')doLogin()"></div>
     <div class="hint" data-i18n="defaultPassHint">Default password: leave2026 — change it after first login (Password button).</div>
   </div>
@@ -393,17 +423,61 @@ body.admin .lock-note{display:none}
   </div>
 </div></div>
 
+<!-- GOOGLE -->
+<div class="modal-back" id="mG"><div class="modal">
+  <div class="modal-head"><h3>📄 <span data-i18n="gTitle">Google Drive Sync</span></h3><button class="modal-x" onclick="closeModal('mG')">✕</button></div>
+  <div class="modal-body">
+    <div class="field"><label data-i18n="fbStatus">Status</label><div id="gStatusLine" style="font-weight:800">—</div></div>
+    <div class="field"><label data-i18n="gUrl">Apps Script Web App URL</label><input id="gUrl" placeholder="https://script.google.com/macros/s/.../exec"></div>
+    <div class="field"><label data-i18n="gSecret">Write secret</label><input id="gSecret" placeholder="—"></div>
+    <div class="field"><label data-i18n="gPoll">Auto-refresh seconds (10–300)</label><input type="number" id="gPoll" min="10" max="300" value="30"></div>
+    <div class="field"><label style="display:flex;gap:8px;align-items:center;font-weight:600"><input type="checkbox" id="gUse" style="width:auto" checked onchange="gToggleDevice()"> <span data-i18n="gUseDevice">Use Google sync on this device</span></label></div>
+    <div class="hint" data-i18n="gHelp">Google Drive: Apps Script...</div>
+  </div>
+  <div class="modal-foot" style="flex-wrap:wrap">
+    <button class="btn btn-ghost" onclick="gTest()" data-i18n="fbTest">Test</button>
+    <button class="btn btn-ghost" onclick="gPushNow()" data-i18n="fbPushNow">Push now</button>
+    <button class="btn btn-primary" onclick="gDownload()" data-i18n="gDownloadBtn">Download google-config.js</button>
+  </div>
+</div></div>
+
+<!-- SCHEDULE FORM -->
+<div class="modal-back" id="mSched"><div class="modal">
+  <div class="modal-head"><h3 id="schedFormTitle">➕ Schedule</h3><button class="modal-x" onclick="closeModal('mSched')">✕</button></div>
+  <div class="modal-body">
+    <input type="hidden" id="scId">
+    <div class="field"><label data-i18n="thName">Name</label><select id="scName"></select></div>
+    <div class="field-row">
+      <div class="field"><label data-i18n="thFrom">From</label><input type="date" id="scFrom" onchange="updateSchedHint()"></div>
+      <div class="field"><label data-i18n="thTo">To</label><input type="date" id="scTo" onchange="updateSchedHint()"></div>
+    </div>
+    <div class="hint" id="scRangeHint" style="margin:-4px 0 12px"></div>
+    <div class="field"><label data-i18n="thShift">Shift</label><select id="scShift"></select></div>
+    <div class="field"><label data-i18n="thNote">Note</label><input id="scNote" data-i18n-ph="schedNotePh" placeholder="e.g. Counter duty"></div>
+  </div>
+  <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal('mSched')" data-i18n="cancel">Cancel</button><button class="btn btn-primary" onclick="saveSched()">💾 <span data-i18n="save">Save</span></button></div>
+</div></div>
+
+<!-- USERS -->
+<div class="modal-back" id="mUsers"><div class="modal">
+  <div class="modal-head"><h3>👥 <span data-i18n="usersTitle">Users</span></h3><button class="modal-x" onclick="closeModal('mUsers')">✕</button></div>
+  <div class="modal-body" id="usersBody"></div>
+  <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal('mUsers')" data-i18n="cancel">Cancel</button></div>
+</div></div>
+
 <div id="toast"></div>
 
 <script>
+window.addEventListener("error",function(e){try{const m=String((e&&e.message)||"Error");const now=Date.now();if(window._lastErr===m&&now-window._lastErrT<5000)return;window._lastErr=m;window._lastErrT=now;toast("⚠️ "+m)}catch(_){}});
 /* ============ I18N ============ */
 const I18N = {
-en:{appTitle:"Staff Leave Chart",appSubtitle:"Viewable by everyone • Editing is password protected",viewMode:"View mode",adminMode:"Edit mode",login:"Edit Login",logout:"Logout",totalStaff:"Total staff",takenDays:"Working days taken",upcomingDays:"Upcoming working days",onLeaveToday:"On leave today",dashboard:"Dashboard",yearChart:"Year Chart",allLeaves:"All Leaves",takenTab:"Taken",upcomingTab:"Upcoming",team:"Team",lockNote:"Everyone can view. To add / edit / delete, press “Edit Login” and enter the password.",addLeave:"Add Leave",addStaff:"Add Staff",print:"Print",changePass:"Password",reset:"Reset",nextLeaves:"Next approved leaves",daysPerPerson:"Working days per person",recentLeaves:"Recently added",year:"Year",chartHint:"Numbers = approved working days in that month (Sundays & govt holidays excluded). Click a row name to filter All Leaves.",searchPh:"🔍 Search name / reason...",thName:"Name",thFrom:"From",thTo:"To",thDays:"Days",thType:"Type",thReason:"Reason",thStatus:"Status",thAction:"Action",takenHint:"Approved working days taken within the selected year (up to today).",upHint:"Future approved working days (after today), sorted by nearest date.",teamHint:"Click a name card to see that person's leaves.",footer1:"Leave Chart • Everyone can view, editing needs password",footer2:"Data is saved in this browser. Use Export JSON as backup before clearing browser data.",loginTitle:"Editor Login",password:"Password",passPh:"Enter edit password",defaultPassHint:"Default password: leave2026 — change it after first login (Password button).",cancel:"Cancel",loginBtn:"Login",reasonPh:"e.g. Family trip / Medical",save:"Save",currentPass:"Current password",newPass:"New password",all:"All",noData:"No records found.",days:"days",day:"day",inDays:"in {n} days",tomorrow:"Tomorrow",total:"Total",taken:"Taken",upcoming:"Upcoming",pending:"Pending",deleteConfirm:"Delete this leave record?",deleteStaff:"Delete staff member and ALL their leaves?",wrongPass:"❌ Wrong password",loginOk:"✅ Welcome! Edit mode ON",logoutOk:"Logged out. View mode.",saved:"✅ Saved",deleted:"🗑️ Deleted",staffAdded:"✅ Staff added",staffDeleted:"🗑️ Staff deleted",passChanged:"✅ Password changed",resetDone:"↩️ Demo data restored",importOk:"✅ Imported successfully",importFail:"❌ Invalid file",needLogin:"🔐 Please login first",editLeave:"Edit Leave",addLeaveTitle:"Add Leave",monthCal:"Month Calendar",thisMonth:"This month",lgLeave:"On leave (approved)",lgHol:"Sunday / Government holiday",sunday:"Sunday",holForAll:"Holiday for everyone",lgBoth:"Leave + Holiday",lgPend:"Pending leave",lgToday:"Today",govHol:"Government holiday",onLeaveN:"{n} on leave",noLeaveDay:"No leaves on this day",addHoliday:"Add Holiday",holDate:"Date",holNameEn:"Name (English)",holNameSi:"Name (Sinhala)",holNameTa:"Name (Tamil)",holAdded:"✅ Holiday added",holDeleted:"🗑️ Holiday removed",slHolNote:"Sri Lanka government holidays 2026 included (Poya, festivals & special days). Admin can add more",wdBreak:"📅 {cal} calendar days − {off} off days = {wd} working days",wdZero:"⚠️ All selected dates are Sundays/holidays (0 working days)",reload:"Reload",syncOk:"✅ Synced",syncDirty:"🟠 Unsynced — Export data.json",jsonLive:"📦 GitHub data",jsonLocal:"📦 Local data",jsonFail:"⚠️ Could not load latest data.json — showing saved data",exportedJson:"⬆️ data.json downloaded — upload it to GitHub",confirmReload:"Discard unsynced changes and reload from GitHub?",fbTitle:"Firebase Live Sync",fbStatus:"Status",fbApiKey:"API Key",fbAuthDomain:"Auth Domain",fbDbUrl:"Database URL",fbProjectId:"Project ID",fbSecret:"Write secret (optional)",fbTest:"Test",fbDownload:"Download firebase-config.js",fbPushNow:"Push now",fbUseDevice:"Use Firebase on this device",fbHelp:"Firebase Console → Realtime Database → Create → Test mode → paste config here → Test → Download → upload to GitHub. After that, Admin edits sync live to everyone!",fbNoSdk:"⚠️ Firebase library not loaded (need internet)",fbTestOk:"✅ Connected! Live data found",fbTestEmpty:"✅ Connected! Database empty — press Push now",fbTestFail:"❌ Connection failed — check config & rules",fbDownloaded:"⬇️ firebase-config.js downloaded — upload to GitHub",fbPushed:"⬆️ Pushed to Firebase",fbLive:"🔥 Live update received",fbConflict:"⚠️ New live data arrived, but you have unsynced edits — kept yours. Push to overwrite."},
-si:{appTitle:"නිවාඩු සටහන",appSubtitle:"සැමට බැලිය හැක • සංස්කරණයට මුරපදය අවශ්‍යයි",viewMode:"බැලීමේ ආකාරය",adminMode:"සංස්කරණ ආකාරය",login:"සංස්කරණ පිවිසුම",logout:"ඉවත් වන්න",totalStaff:"මුළු සේවකයින්",takenDays:"ගත් වැඩ දින",upcomingDays:"ඉදිරි වැඩ දින",onLeaveToday:"අද නිවාඩු",dashboard:"මුල් පිටුව",yearChart:"වාර්ෂික සටහන",allLeaves:"සියලු නිවාඩු",takenTab:"ගත් නිවාඩු",upcomingTab:"ඉදිරියේදී",team:"කණ්ඩායම",lockNote:"සැමට බැලිය හැක. එකතු කිරීමට / සංස්කරණයට / මැකීමට “සංස්කරණ පිවිසුම” ඔබා මුරපදය දෙන්න.",addLeave:"නිවාඩුවක් දමන්න",addStaff:"සේවකයෙක් දමන්න",print:"මුද්‍රණය",changePass:"මුරපදය",reset:"නැවත සකසන්න",nextLeaves:"ඊළඟ අනුමත නිවාඩු",daysPerPerson:"එක් අයෙකුට වැඩ දින",recentLeaves:"අලුතින් එකතු කළ",year:"වර්ෂය",chartHint:"ඉලක්කම් = එම මාසයේ අනුමත වැඩ දින (ඉරිදා සහ රජයේ නිවාඩු අයින්). නමක් ක්ලික් කළොත් එම අයගේ නිවාඩු පෙරේ.",searchPh:"🔍 නම / හේතුව සොයන්න...",thName:"නම",thFrom:"සිට",thTo:"දක්වා",thDays:"දින",thType:"වර්ගය",thReason:"හේතුව",thStatus:"තත්ත්වය",thAction:"ක්‍රියාව",takenHint:"තෝරාගත් වර්ෂය තුළ (අද දක්වා) ගත් අනුමත වැඩ දින.",upHint:"අදට පසු අනුමත අනාගත වැඩ දින, ළඟම දිනය පළමුව.",teamHint:"අයෙකුගේ නිවාඩු බැලීමට නම පත ක්ලික් කරන්න.",footer1:"නිවාඩු සටහන • සැමට බැලිය හැක, සංස්කරණයට මුරපදය අවශ්‍යයි",footer2:"දත්ත මෙම බ්‍රවුසරයේ සුරකී. බ්‍රවුසර් දත්ත මැකීමට පෙර Export JSON මගින් උපස්ථයක් තබාගන්න.",loginTitle:"සංස්කරණ පිවිසුම",password:"මුරපදය",passPh:"සංස්කරණ මුරපදය දෙන්න",defaultPassHint:"මුල් මුරපදය: leave2026 — පළමු පිවිසුමෙන් පසු එය වෙනස් කරන්න (මුරපදය බොත්තම).",cancel:"අවලංගු",loginBtn:"පිවිසෙන්න",reasonPh:"උදා. පවුලේ ගමන / වෛද්‍ය",save:"සුරකින්න",currentPass:"වත්මන් මුරපදය",newPass:"නව මුරපදය",all:"සියල්ල",noData:"වාර්තා හමු නොවීය.",days:"දින",day:"දිනය",inDays:"දින {n} කින්",tomorrow:"හෙට",total:"මුළු",taken:"ගත්තේ",upcoming:"ඉදිරි",pending:"අපේක්ෂිත",deleteConfirm:"මෙම නිවාඩු වාර්තාව මකන්නද?",deleteStaff:"මෙම සේවකයා සහ ඔහුගේ/ඇයගේ සියලු නිවාඩු මකන්නද?",wrongPass:"❌ මුරපදය වැරදියි",loginOk:"✅ ආයුබෝවන්! සංස්කරණ ආකාරය ON",logoutOk:"ඉවත් වුණා. බැලීමේ ආකාරය.",saved:"✅ සුරකින ලදී",deleted:"🗑️ මකන ලදී",staffAdded:"✅ සේවකයා එකතු කළා",staffDeleted:"🗑️ සේවකයා මකන ලදී",passChanged:"✅ මුරපදය වෙනස් කළා",resetDone:"↩️ ආදර්ශ දත්ත යළි සකසන ලදී",importOk:"✅ සාර්ථකව ඇතුළු කළා",importFail:"❌ ගොනුව වැරදියි",needLogin:"🔐 පළමුව පිවිසෙන්න",editLeave:"නිවාඩුව සංස්කරණය",addLeaveTitle:"නිවාඩුවක් දමන්න",monthCal:"මාසික කැලැන්ඩරය",thisMonth:"මේ මාසය",lgLeave:"නිවාඩු (අනුමත)",lgHol:"ඉරිදා / රජයේ නිවාඩු",sunday:"ඉරිදා",holForAll:"සැමටම නිවාඩු",lgBoth:"නිවාඩු + රජයේ නිවාඩු",lgPend:"අපේක්ෂිත නිවාඩු",lgToday:"අද",govHol:"රජයේ නිවාඩු දිනය",onLeaveN:"{n} දෙනෙක් නිවාඩු",noLeaveDay:"මෙදින නිවාඩු නැත",addHoliday:"නිවාඩු දිනයක් දමන්න",holDate:"දිනය",holNameEn:"නම (ඉංග්‍රීසි)",holNameSi:"නම (සිංහල)",holNameTa:"නම (දෙමළ)",holAdded:"✅ නිවාඩු දිනය එකතු කළා",holDeleted:"🗑️ නිවාඩු දිනය ඉවත් කළා",slHolNote:"2026 ශ්‍රී ලංකා රජයේ නිවාඩු ඇතුළත් කර ඇත (පෝය, උත්සව හා විශේෂ දින). Admin ට තවත් දාන්න පුළුවන්",wdBreak:"📅 දින {cal} − නිවාඩු දින {off} = වැඩ දින {wd}",wdZero:"⚠️ තෝරාගත් සියලු දින ඉරිදා/නිවාඩුයි (වැඩ දින 0)",reload:"නැවත ගන්න",syncOk:"✅ සමමුහුර්තයි",syncDirty:"🟠 නොගැලපේ — data.json Export කරන්න",jsonLive:"📦 GitHub දත්ත",jsonLocal:"📦 Local දත්ත",jsonFail:"⚠️ අලුත් data.json ගන්න බැරිවුණා — සුරකින ලද දත්ත පෙන්වනවා",exportedJson:"⬆️ data.json බාගත කළා — GitHub එකට upload කරන්න",confirmReload:"සුරැකුම් නොකළ වෙනස්කම් අතහැර GitHub වෙතින් නැවත ගන්නද?",fbTitle:"Firebase Live Sync",fbStatus:"තත්ත්වය",fbApiKey:"API Key",fbAuthDomain:"Auth Domain",fbDbUrl:"Database URL",fbProjectId:"Project ID",fbSecret:"Write secret (optional)",fbTest:"Test",fbDownload:"firebase-config.js බාගන්න",fbPushNow:"Push now",fbUseDevice:"මෙම device එකේ Firebase පාවිච්චි කරන්න",fbHelp:"Firebase Console → Realtime Database → Create → Test mode → config මෙතන paste → Test → Download → GitHub ට upload. ඉන්පසු Admin edit කළ ගමන් හැමෝටම live update!",fbNoSdk:"⚠️ Firebase library load වුණේ නැහැ (internet ඕනේ)",fbTestOk:"✅ සම්බන්ධයි! Live data හමුණා",fbTestEmpty:"✅ සම්බන්ධයි! Database හිස් — Push now ඔබන්න",fbTestFail:"❌ සම්බන්ධ වෙන්න බැහැ — config & rules බලන්න",fbDownloaded:"⬇️ firebase-config.js බාගත කළා — GitHub එකට upload කරන්න",fbPushed:"⬆️ Firebase වෙත Push කළා",fbLive:"🔥 Live update එකක් ආවා",fbConflict:"⚠️ අලුත් live data ආවා, නමුත් ඔබේ unsynced වෙනස්කම් තියෙනවා — ඔබේ ඒවා තියාගත්තා. Push කළොත් overwrite වෙනවා."},
-ta:{appTitle:"விடுப்பு அட்டவணை",appSubtitle:"அனைவரும் பார்க்கலாம் • திருத்த password தேவை",viewMode:"பார்வை முறை",adminMode:"திருத்து முறை",login:"திருத்து நுழைவு",logout:"வெளியேறு",totalStaff:"மொத்த ஊழியர்கள்",takenDays:"எடுத்த வேலை நாட்கள்",upcomingDays:"வரவிருக்கும் வேலை நாட்கள்",onLeaveToday:"இன்று விடுப்பில்",dashboard:"முகப்பு",yearChart:"ஆண்டு அட்டவணை",allLeaves:"அனைத்து விடுப்புகள்",takenTab:"எடுத்தவை",upcomingTab:"வரவிருக்கும்",team:"குழு",lockNote:"அனைவரும் பார்க்கலாம். சேர்க்க / திருத்த / நீக்க “திருத்து நுழைவு” அழுத்தி password கொடுக்கவும்.",addLeave:"விடுப்பு சேர்",addStaff:"ஊழியர் சேர்",print:"அச்சிடு",changePass:"Password",reset:"மீட்டமை",nextLeaves:"அடுத்த அங்கீகரித்த விடுப்புகள்",daysPerPerson:"ஒருவருக்கு வேலை நாட்கள்",recentLeaves:"சமீபத்தில் சேர்த்தவை",year:"ஆண்டு",chartHint:"எண்கள் = அந்த மாதத்தில் அங்கீகரித்த வேலை நாட்கள் (ஞாயிறு & அரசு விடுமுறை நீங்கலாக). பெயரை கிளிக் செய்தால் வடிகட்டலாம்.",searchPh:"🔍 பெயர் / காரணம் தேடுக...",thName:"பெயர்",thFrom:"முதல்",thTo:"வரை",thDays:"நாட்கள்",thType:"வகை",thReason:"காரணம்",thStatus:"நிலை",thAction:"செயல்",takenHint:"தேர்ந்த ஆண்டில் (இன்று வரை) எடுத்த அங்கீகரித்த வேலை நாட்கள்.",upHint:"இன்றுக்குப் பின் அங்கீகரித்த வரவிருக்கும் வேலை நாட்கள், அருகிலுள்ள தேதி முதலில்.",teamHint:"ஒருவரின் விடுப்பைப் பார்க்க பெயர் அட்டையை கிளிக் செய்க.",footer1:"விடுப்பு அட்டவணை • அனைவரும் பார்க்கலாம், திருத்த password தேவை",footer2:"தரவு இந்த உலாவியில் சேமிக்கப்படும். உலாவி தரவை அழிக்கும் முன் Export JSON மூலம் காப்பு எடுக்கவும்.",loginTitle:"திருத்து நுழைவு",password:"Password",passPh:"திருத்து password கொடுக்கவும்",defaultPassHint:"ஆரம்ப password: leave2026 — முதல் நுழைவுக்குப் பின் மாற்றவும் (Password பொத்தான்).",cancel:"ரத்து",loginBtn:"நுழைக",reasonPh:"எ.கா. குடும்ப பயணம் / மருத்துவம்",save:"சேமி",currentPass:"தற்போதைய password",newPass:"புதிய password",all:"அனைத்தும்",noData:"பதிவுகள் இல்லை.",days:"நாட்கள்",day:"நாள்",inDays:"{n} நாட்களில்",tomorrow:"நாளை",total:"மொத்தம்",taken:"எடுத்தது",upcoming:"வரவிருக்கும்",pending:"நிலுவை",deleteConfirm:"இந்த விடுப்பு பதிவை நீக்கவா?",deleteStaff:"இந்த ஊழியரையும் அவரது அனைத்து விடுப்புகளையும் நீக்கவா?",wrongPass:"❌ தவறான password",loginOk:"✅ வணக்கம்! திருத்து முறை ON",logoutOk:"வெளியேறினீர்கள். பார்வை முறை.",saved:"✅ சேமிக்கப்பட்டது",deleted:"🗑️ நீக்கப்பட்டது",staffAdded:"✅ ஊழியர் சேர்க்கப்பட்டார்",staffDeleted:"🗑️ ஊழியர் நீக்கப்பட்டார்",passChanged:"✅ Password மாற்றப்பட்டது",resetDone:"↩️ மாதிரி தரவு மீட்கப்பட்டது",importOk:"✅ வெற்றிகரமாக இறக்குமதி",importFail:"❌ தவறான கோப்பு",needLogin:"🔐 முதலில் நுழையவும்",editLeave:"விடுப்பைத் திருத்து",addLeaveTitle:"விடுப்பு சேர்",monthCal:"மாத நாட்காட்டி",thisMonth:"இந்த மாதம்",lgLeave:"விடுப்பில் (அங்கீகரித்த)",lgHol:"ஞாயிறு / அரசு விடுமுறை",sunday:"ஞாயிறு",holForAll:"அனைவருக்கும் விடுமுறை",lgBoth:"விடுப்பு + அரசு விடுமுறை",lgPend:"நிலுவை விடுப்பு",lgToday:"இன்று",govHol:"அரசு விடுமுறை தினம்",onLeaveN:"{n} பேர் விடுப்பில்",noLeaveDay:"இந்நாளில் விடுப்பு இல்லை",addHoliday:"விடுமுறை சேர்",holDate:"தேதி",holNameEn:"பெயர் (ஆங்கிலம்)",holNameSi:"பெயர் (சிங்களம்)",holNameTa:"பெயர் (தமிழ்)",holAdded:"✅ விடுமுறை சேர்க்கப்பட்டது",holDeleted:"🗑️ விடுமுறை நீக்கப்பட்டது",slHolNote:"2026 இலங்கை அரசு விடுமுறைகள் சேர்க்கப்பட்டுள்ளன (போயா, பண்டிகை & சிறப்பு நாட்கள்). Admin மேலும் சேர்க்கலாம்",wdBreak:"📅 {cal} நாட்கள் − விடுமுறை {off} = வேலை நாட்கள் {wd}",wdZero:"⚠️ தேர்ந்த அனைத்தும் ஞாயிறு/விடுமுறை (வேலை நாள் 0)",reload:"மீண்டும் ஏற்று",syncOk:"✅ ஒத்திசைவு",syncDirty:"🟠 ஒத்திசைவில்லை — data.json Export செய்க",jsonLive:"📦 GitHub தரவு",jsonLocal:"📦 Local தரவு",jsonFail:"⚠️ புதிய data.json ஏற்ற முடியவில்லை — சேமித்த தரவு காட்டப்படுகிறது",exportedJson:"⬆️ data.json பதிவிறக்கப்பட்டது — GitHub இல் upload செய்க",confirmReload:"சேமிக்காத மாற்றங்களை நீக்கி GitHub இலிருந்து மீண்டும் ஏற்றவா?",fbTitle:"Firebase Live Sync",fbStatus:"நிலை",fbApiKey:"API Key",fbAuthDomain:"Auth Domain",fbDbUrl:"Database URL",fbProjectId:"Project ID",fbSecret:"Write secret (optional)",fbTest:"Test",fbDownload:"firebase-config.js பதிவிறக்கு",fbPushNow:"Push now",fbUseDevice:"இந்த device இல் Firebase பயன்படுத்து",fbHelp:"Firebase Console → Realtime Database → Create → Test mode → config இங்கே paste → Test → Download → GitHub இல் upload. பின் Admin திருத்தியதும் அனைவருக்கும் live update!",fbNoSdk:"⚠️ Firebase library ஏற்றப்படவில்லை (internet தேவை)",fbTestOk:"✅ இணைப்பு! Live தரவு கிடைத்தது",fbTestEmpty:"✅ இணைப்பு! Database காலி — Push now அழுத்தவும்",fbTestFail:"❌ இணைக்க முடியவில்லை — config & rules பார்க்கவும்",fbDownloaded:"⬇️ firebase-config.js பதிவிறக்கப்பட்டது — GitHub இல் upload செய்க",fbPushed:"⬆️ Firebase க்கு Push செய்யப்பட்டது",fbLive:"🔥 Live update வந்தது",fbConflict:"⚠️ புதிய live தரவு வந்தது, ஆனால் உங்கள் unsynced மாற்றங்கள் உள்ளன — உங்களுடையது வைக்கப்பட்டது. Push செய்தால் மேலெழுதப்படும்."}
+en:{appTitle:"Staff Leave Chart",appSubtitle:"Viewable by everyone • Editing is password protected",viewMode:"View mode",adminMode:"Edit mode",login:"Edit Login",logout:"Logout",totalStaff:"Total staff",takenDays:"Working days taken",upcomingDays:"Upcoming working days",onLeaveToday:"On leave today",dashboard:"Dashboard",yearChart:"Year Chart",allLeaves:"All Leaves",takenTab:"Taken",upcomingTab:"Upcoming",team:"Team",lockNote:"Everyone can view. To add / edit / delete, press “Edit Login” and enter the password.",addLeave:"Add Leave",addStaff:"Add Staff",print:"Print",changePass:"Password",reset:"Reset",nextLeaves:"Next approved leaves",daysPerPerson:"Working days per person",recentLeaves:"Recently added",year:"Year",chartHint:"Numbers = approved working days in that month (Sundays & govt holidays excluded). Click a row name to filter All Leaves.",searchPh:"🔍 Search name / reason...",thName:"Name",thFrom:"From",thTo:"To",thDays:"Days",thType:"Type",thReason:"Reason",thStatus:"Status",thAction:"Action",takenHint:"Approved working days taken within the selected year (up to today).",upHint:"Future approved working days (after today), sorted by nearest date.",teamHint:"Click a name card to see that person's leaves.",footer1:"Leave Chart • Everyone can view, editing needs password",footer2:"Data is saved in this browser. Use Export JSON as backup before clearing browser data.",loginTitle:"Editor Login",password:"Password",passPh:"Enter edit password",defaultPassHint:"Default logins: admin/leave2026, Entry/entry2026, Zameer/zameer2026, Jamil/jamil2026 — change after first login.",cancel:"Cancel",loginBtn:"Login",reasonPh:"e.g. Family trip / Medical",save:"Save",currentPass:"Current password",newPass:"New password",all:"All",noData:"No records found.",days:"days",day:"day",inDays:"in {n} days",tomorrow:"Tomorrow",total:"Total",taken:"Taken",upcoming:"Upcoming",pending:"Pending",deleteConfirm:"Delete this leave record?",deleteStaff:"Delete staff member and ALL their leaves?",wrongPass:"❌ Wrong password",loginOk:"✅ Welcome! Edit mode ON",logoutOk:"Logged out. View mode.",saved:"✅ Saved",deleted:"🗑️ Deleted",staffAdded:"✅ Staff added",staffDeleted:"🗑️ Staff deleted",passChanged:"✅ Password changed",resetDone:"↩️ Demo data restored",importOk:"✅ Imported successfully",importFail:"❌ Invalid file",needLogin:"🔐 Please login first",editLeave:"Edit Leave",addLeaveTitle:"Add Leave",monthCal:"Month Calendar",thisMonth:"This month",lgLeave:"On leave (approved)",lgHol:"Sunday / Government holiday",sunday:"Sunday",holForAll:"Holiday for everyone",lgBoth:"Leave + Holiday",lgPend:"Pending leave",lgToday:"Today",govHol:"Government holiday",onLeaveN:"{n} on leave",noLeaveDay:"No leaves on this day",addHoliday:"Add Holiday",holDate:"Date",holNameEn:"Name (English)",holNameSi:"Name (Sinhala)",holNameTa:"Name (Tamil)",holAdded:"✅ Holiday added",holDeleted:"🗑️ Holiday removed",slHolNote:"Sri Lanka government holidays 2026 included (Poya, festivals & special days). Admin can add more",wdBreak:"📅 {cal} calendar days − {off} off days = {wd} working days",wdZero:"⚠️ All selected dates are Sundays/holidays (0 working days)",reload:"Reload",syncOk:"✅ Synced",syncDirty:"🟠 Unsynced — Export data.json",jsonLive:"📦 GitHub data",jsonLocal:"📦 Local data",jsonFail:"⚠️ Could not load latest data.json — showing saved data",exportedJson:"⬆️ data.json downloaded — upload it to GitHub",confirmReload:"Discard unsynced changes and reload from GitHub?",fbTitle:"Firebase Live Sync",fbStatus:"Status",fbApiKey:"API Key",fbAuthDomain:"Auth Domain",fbDbUrl:"Database URL",fbProjectId:"Project ID",fbSecret:"Write secret (optional)",fbTest:"Test",fbDownload:"Download firebase-config.js",fbPushNow:"Push now",fbUseDevice:"Use Firebase on this device",fbHelp:"Firebase Console → Realtime Database → Create → Test mode → paste config here → Test → Download → upload to GitHub. After that, Admin edits sync live to everyone!",fbNoSdk:"⚠️ Firebase library not loaded (need internet)",fbTestOk:"✅ Connected! Live data found",fbTestEmpty:"✅ Connected! Database empty — press Push now",fbTestFail:"❌ Connection failed — check config & rules",fbDownloaded:"⬇️ firebase-config.js downloaded — upload to GitHub",fbPushed:"⬆️ Pushed to Firebase",fbLive:"🔥 Live update received",fbConflict:"⚠️ New live data arrived, but you have unsynced edits — kept yours. Push to overwrite.",gTitle:"Google Drive Sync",gUrl:"Apps Script Web App URL",gSecret:"Write secret",gPoll:"Auto-refresh seconds (10–300)",gUseDevice:"Use Google sync on this device",gHelp:"Google Drive → New → Apps Script → paste Code.gs → Deploy → Web app (Anyone) → paste URL + secret here → Test → Download → upload to GitHub. Data auto-refreshes + Admin edits auto-save to Drive!",gEmpty:"✅ Connected! Drive file empty — press Push now",gDownloaded:"⬇️ google-config.js downloaded — upload to GitHub",gPushFail:"❌ Save to Google failed — check URL/secret/deployment",gDownloadBtn:"Download google-config.js",schedTab:"Schedule",addSched:"Add Schedule",editSched:"Edit Schedule",thDate:"Date",thShift:"Shift",thNote:"Note",schedSearchPh:"🔍 Search name / note...",schedNotePh:"e.g. Counter duty",rangeHint:"{n} days → {n} entries (existing dates updated)",schedForDay:"Work schedule",onDutyToday:"On duty today",lgSched:"Work schedule",schedDelete:"Delete this schedule entry?",noPerm:"⛔ No permission for your role",role_admin:"Admin",role_entry:"Data Entry",role_scheduler:"Scheduler",loginUser:"User",usersTitle:"Users"},
+si:{appTitle:"නිවාඩු සටහන",appSubtitle:"සැමට බැලිය හැක • සංස්කරණයට මුරපදය අවශ්‍යයි",viewMode:"බැලීමේ ආකාරය",adminMode:"සංස්කරණ ආකාරය",login:"සංස්කරණ පිවිසුම",logout:"ඉවත් වන්න",totalStaff:"මුළු සේවකයින්",takenDays:"ගත් වැඩ දින",upcomingDays:"ඉදිරි වැඩ දින",onLeaveToday:"අද නිවාඩු",dashboard:"මුල් පිටුව",yearChart:"වාර්ෂික සටහන",allLeaves:"සියලු නිවාඩු",takenTab:"ගත් නිවාඩු",upcomingTab:"ඉදිරියේදී",team:"කණ්ඩායම",lockNote:"සැමට බැලිය හැක. එකතු කිරීමට / සංස්කරණයට / මැකීමට “සංස්කරණ පිවිසුම” ඔබා මුරපදය දෙන්න.",addLeave:"නිවාඩුවක් දමන්න",addStaff:"සේවකයෙක් දමන්න",print:"මුද්‍රණය",changePass:"මුරපදය",reset:"නැවත සකසන්න",nextLeaves:"ඊළඟ අනුමත නිවාඩු",daysPerPerson:"එක් අයෙකුට වැඩ දින",recentLeaves:"අලුතින් එකතු කළ",year:"වර්ෂය",chartHint:"ඉලක්කම් = එම මාසයේ අනුමත වැඩ දින (ඉරිදා සහ රජයේ නිවාඩු අයින්). නමක් ක්ලික් කළොත් එම අයගේ නිවාඩු පෙරේ.",searchPh:"🔍 නම / හේතුව සොයන්න...",thName:"නම",thFrom:"සිට",thTo:"දක්වා",thDays:"දින",thType:"වර්ගය",thReason:"හේතුව",thStatus:"තත්ත්වය",thAction:"ක්‍රියාව",takenHint:"තෝරාගත් වර්ෂය තුළ (අද දක්වා) ගත් අනුමත වැඩ දින.",upHint:"අදට පසු අනුමත අනාගත වැඩ දින, ළඟම දිනය පළමුව.",teamHint:"අයෙකුගේ නිවාඩු බැලීමට නම පත ක්ලික් කරන්න.",footer1:"නිවාඩු සටහන • සැමට බැලිය හැක, සංස්කරණයට මුරපදය අවශ්‍යයි",footer2:"දත්ත මෙම බ්‍රවුසරයේ සුරකී. බ්‍රවුසර් දත්ත මැකීමට පෙර Export JSON මගින් උපස්ථයක් තබාගන්න.",loginTitle:"සංස්කරණ පිවිසුම",password:"මුරපදය",passPh:"සංස්කරණ මුරපදය දෙන්න",defaultPassHint:"මුල් logins: admin/leave2026, Entry/entry2026, Zameer/zameer2026, Jamil/jamil2026 — පළමු පිවිසුමෙන් පසු වෙනස් කරන්න.",cancel:"අවලංගු",loginBtn:"පිවිසෙන්න",reasonPh:"උදා. පවුලේ ගමන / වෛද්‍ය",save:"සුරකින්න",currentPass:"වත්මන් මුරපදය",newPass:"නව මුරපදය",all:"සියල්ල",noData:"වාර්තා හමු නොවීය.",days:"දින",day:"දිනය",inDays:"දින {n} කින්",tomorrow:"හෙට",total:"මුළු",taken:"ගත්තේ",upcoming:"ඉදිරි",pending:"අපේක්ෂිත",deleteConfirm:"මෙම නිවාඩු වාර්තාව මකන්නද?",deleteStaff:"මෙම සේවකයා සහ ඔහුගේ/ඇයගේ සියලු නිවාඩු මකන්නද?",wrongPass:"❌ මුරපදය වැරදියි",loginOk:"✅ ආයුබෝවන්! සංස්කරණ ආකාරය ON",logoutOk:"ඉවත් වුණා. බැලීමේ ආකාරය.",saved:"✅ සුරකින ලදී",deleted:"🗑️ මකන ලදී",staffAdded:"✅ සේවකයා එකතු කළා",staffDeleted:"🗑️ සේවකයා මකන ලදී",passChanged:"✅ මුරපදය වෙනස් කළා",resetDone:"↩️ ආදර්ශ දත්ත යළි සකසන ලදී",importOk:"✅ සාර්ථකව ඇතුළු කළා",importFail:"❌ ගොනුව වැරදියි",needLogin:"🔐 පළමුව පිවිසෙන්න",editLeave:"නිවාඩුව සංස්කරණය",addLeaveTitle:"නිවාඩුවක් දමන්න",monthCal:"මාසික කැලැන්ඩරය",thisMonth:"මේ මාසය",lgLeave:"නිවාඩු (අනුමත)",lgHol:"ඉරිදා / රජයේ නිවාඩු",sunday:"ඉරිදා",holForAll:"සැමටම නිවාඩු",lgBoth:"නිවාඩු + රජයේ නිවාඩු",lgPend:"අපේක්ෂිත නිවාඩු",lgToday:"අද",govHol:"රජයේ නිවාඩු දිනය",onLeaveN:"{n} දෙනෙක් නිවාඩු",noLeaveDay:"මෙදින නිවාඩු නැත",addHoliday:"නිවාඩු දිනයක් දමන්න",holDate:"දිනය",holNameEn:"නම (ඉංග්‍රීසි)",holNameSi:"නම (සිංහල)",holNameTa:"නම (දෙමළ)",holAdded:"✅ නිවාඩු දිනය එකතු කළා",holDeleted:"🗑️ නිවාඩු දිනය ඉවත් කළා",slHolNote:"2026 ශ්‍රී ලංකා රජයේ නිවාඩු ඇතුළත් කර ඇත (පෝය, උත්සව හා විශේෂ දින). Admin ට තවත් දාන්න පුළුවන්",wdBreak:"📅 දින {cal} − නිවාඩු දින {off} = වැඩ දින {wd}",wdZero:"⚠️ තෝරාගත් සියලු දින ඉරිදා/නිවාඩුයි (වැඩ දින 0)",reload:"නැවත ගන්න",syncOk:"✅ සමමුහුර්තයි",syncDirty:"🟠 නොගැලපේ — data.json Export කරන්න",jsonLive:"📦 GitHub දත්ත",jsonLocal:"📦 Local දත්ත",jsonFail:"⚠️ අලුත් data.json ගන්න බැරිවුණා — සුරකින ලද දත්ත පෙන්වනවා",exportedJson:"⬆️ data.json බාගත කළා — GitHub එකට upload කරන්න",confirmReload:"සුරැකුම් නොකළ වෙනස්කම් අතහැර GitHub වෙතින් නැවත ගන්නද?",fbTitle:"Firebase Live Sync",fbStatus:"තත්ත්වය",fbApiKey:"API Key",fbAuthDomain:"Auth Domain",fbDbUrl:"Database URL",fbProjectId:"Project ID",fbSecret:"Write secret (optional)",fbTest:"Test",fbDownload:"firebase-config.js බාගන්න",fbPushNow:"Push now",fbUseDevice:"මෙම device එකේ Firebase පාවිච්චි කරන්න",fbHelp:"Firebase Console → Realtime Database → Create → Test mode → config මෙතන paste → Test → Download → GitHub ට upload. ඉන්පසු Admin edit කළ ගමන් හැමෝටම live update!",fbNoSdk:"⚠️ Firebase library load වුණේ නැහැ (internet ඕනේ)",fbTestOk:"✅ සම්බන්ධයි! Live data හමුණා",fbTestEmpty:"✅ සම්බන්ධයි! Database හිස් — Push now ඔබන්න",fbTestFail:"❌ සම්බන්ධ වෙන්න බැහැ — config & rules බලන්න",fbDownloaded:"⬇️ firebase-config.js බාගත කළා — GitHub එකට upload කරන්න",fbPushed:"⬆️ Firebase වෙත Push කළා",fbLive:"🔥 Live update එකක් ආවා",fbConflict:"⚠️ අලුත් live data ආවා, නමුත් ඔබේ unsynced වෙනස්කම් තියෙනවා — ඔබේ ඒවා තියාගත්තා. Push කළොත් overwrite වෙනවා.",gTitle:"Google Drive Sync",gUrl:"Apps Script Web App URL",gSecret:"Write secret",gPoll:"Auto-refresh තත්පර (10–300)",gUseDevice:"මෙම device එකේ Google sync පාවිච්චි කරන්න",gHelp:"Google Drive → New → Apps Script → Code.gs paste → Deploy → Web app (Anyone) → URL + secret මෙතන paste → Test → Download → GitHub ට upload. Data auto-refresh වෙනවා + Admin edits Drive ට auto-save!",gEmpty:"✅ සම්බන්ධයි! Drive file හිස් — Push now ඔබන්න",gDownloaded:"⬇️ google-config.js බාගත කළා — GitHub එකට upload කරන්න",gPushFail:"❌ Google ට save වුණේ නැහැ — URL/secret/deployment බලන්න",gDownloadBtn:"google-config.js බාගන්න",schedTab:"උපලේඛනය",addSched:"උපලේඛනයක් දමන්න",editSched:"උපලේඛනය සංස්කරණය",thDate:"දිනය",thShift:"මුරය",thNote:"සටහන",schedSearchPh:"🔍 නම / සටහන සොයන්න...",schedNotePh:"උදා. කවුන්ටර් රාජකාරිය",rangeHint:"දින {n} → ඇතුළත් කිරීම් {n} (ඇති දින update වෙනවා)",schedForDay:"වැඩ උපලේඛනය",onDutyToday:"අද රාජකාරියේ",lgSched:"වැඩ උපලේඛනය",schedDelete:"මෙම උපලේඛන ඇතුළත් කිරීම මකන්නද?",noPerm:"⛔ ඔබේ භූමිකාවට අවසර නැහැ",role_admin:"පරිපාලක",role_entry:"දත්ත ඇතුළත් කරන්නා",role_scheduler:"උපලේඛක",loginUser:"පරිශීලක",usersTitle:"පරිශීලකයින්"},
+ta:{appTitle:"விடுப்பு அட்டவணை",appSubtitle:"அனைவரும் பார்க்கலாம் • திருத்த password தேவை",viewMode:"பார்வை முறை",adminMode:"திருத்து முறை",login:"திருத்து நுழைவு",logout:"வெளியேறு",totalStaff:"மொத்த ஊழியர்கள்",takenDays:"எடுத்த வேலை நாட்கள்",upcomingDays:"வரவிருக்கும் வேலை நாட்கள்",onLeaveToday:"இன்று விடுப்பில்",dashboard:"முகப்பு",yearChart:"ஆண்டு அட்டவணை",allLeaves:"அனைத்து விடுப்புகள்",takenTab:"எடுத்தவை",upcomingTab:"வரவிருக்கும்",team:"குழு",lockNote:"அனைவரும் பார்க்கலாம். சேர்க்க / திருத்த / நீக்க “திருத்து நுழைவு” அழுத்தி password கொடுக்கவும்.",addLeave:"விடுப்பு சேர்",addStaff:"ஊழியர் சேர்",print:"அச்சிடு",changePass:"Password",reset:"மீட்டமை",nextLeaves:"அடுத்த அங்கீகரித்த விடுப்புகள்",daysPerPerson:"ஒருவருக்கு வேலை நாட்கள்",recentLeaves:"சமீபத்தில் சேர்த்தவை",year:"ஆண்டு",chartHint:"எண்கள் = அந்த மாதத்தில் அங்கீகரித்த வேலை நாட்கள் (ஞாயிறு & அரசு விடுமுறை நீங்கலாக). பெயரை கிளிக் செய்தால் வடிகட்டலாம்.",searchPh:"🔍 பெயர் / காரணம் தேடுக...",thName:"பெயர்",thFrom:"முதல்",thTo:"வரை",thDays:"நாட்கள்",thType:"வகை",thReason:"காரணம்",thStatus:"நிலை",thAction:"செயல்",takenHint:"தேர்ந்த ஆண்டில் (இன்று வரை) எடுத்த அங்கீகரித்த வேலை நாட்கள்.",upHint:"இன்றுக்குப் பின் அங்கீகரித்த வரவிருக்கும் வேலை நாட்கள், அருகிலுள்ள தேதி முதலில்.",teamHint:"ஒருவரின் விடுப்பைப் பார்க்க பெயர் அட்டையை கிளிக் செய்க.",footer1:"விடுப்பு அட்டவணை • அனைவரும் பார்க்கலாம், திருத்த password தேவை",footer2:"தரவு இந்த உலாவியில் சேமிக்கப்படும். உலாவி தரவை அழிக்கும் முன் Export JSON மூலம் காப்பு எடுக்கவும்.",loginTitle:"திருத்து நுழைவு",password:"Password",passPh:"திருத்து password கொடுக்கவும்",defaultPassHint:"ஆரம்ப logins: admin/leave2026, Entry/entry2026, Zameer/zameer2026, Jamil/jamil2026 — முதல் நுழைவுக்குப் பின் மாற்றவும்.",cancel:"ரத்து",loginBtn:"நுழைக",reasonPh:"எ.கா. குடும்ப பயணம் / மருத்துவம்",save:"சேமி",currentPass:"தற்போதைய password",newPass:"புதிய password",all:"அனைத்தும்",noData:"பதிவுகள் இல்லை.",days:"நாட்கள்",day:"நாள்",inDays:"{n} நாட்களில்",tomorrow:"நாளை",total:"மொத்தம்",taken:"எடுத்தது",upcoming:"வரவிருக்கும்",pending:"நிலுவை",deleteConfirm:"இந்த விடுப்பு பதிவை நீக்கவா?",deleteStaff:"இந்த ஊழியரையும் அவரது அனைத்து விடுப்புகளையும் நீக்கவா?",wrongPass:"❌ தவறான password",loginOk:"✅ வணக்கம்! திருத்து முறை ON",logoutOk:"வெளியேறினீர்கள். பார்வை முறை.",saved:"✅ சேமிக்கப்பட்டது",deleted:"🗑️ நீக்கப்பட்டது",staffAdded:"✅ ஊழியர் சேர்க்கப்பட்டார்",staffDeleted:"🗑️ ஊழியர் நீக்கப்பட்டார்",passChanged:"✅ Password மாற்றப்பட்டது",resetDone:"↩️ மாதிரி தரவு மீட்கப்பட்டது",importOk:"✅ வெற்றிகரமாக இறக்குமதி",importFail:"❌ தவறான கோப்பு",needLogin:"🔐 முதலில் நுழையவும்",editLeave:"விடுப்பைத் திருத்து",addLeaveTitle:"விடுப்பு சேர்",monthCal:"மாத நாட்காட்டி",thisMonth:"இந்த மாதம்",lgLeave:"விடுப்பில் (அங்கீகரித்த)",lgHol:"ஞாயிறு / அரசு விடுமுறை",sunday:"ஞாயிறு",holForAll:"அனைவருக்கும் விடுமுறை",lgBoth:"விடுப்பு + அரசு விடுமுறை",lgPend:"நிலுவை விடுப்பு",lgToday:"இன்று",govHol:"அரசு விடுமுறை தினம்",onLeaveN:"{n} பேர் விடுப்பில்",noLeaveDay:"இந்நாளில் விடுப்பு இல்லை",addHoliday:"விடுமுறை சேர்",holDate:"தேதி",holNameEn:"பெயர் (ஆங்கிலம்)",holNameSi:"பெயர் (சிங்களம்)",holNameTa:"பெயர் (தமிழ்)",holAdded:"✅ விடுமுறை சேர்க்கப்பட்டது",holDeleted:"🗑️ விடுமுறை நீக்கப்பட்டது",slHolNote:"2026 இலங்கை அரசு விடுமுறைகள் சேர்க்கப்பட்டுள்ளன (போயா, பண்டிகை & சிறப்பு நாட்கள்). Admin மேலும் சேர்க்கலாம்",wdBreak:"📅 {cal} நாட்கள் − விடுமுறை {off} = வேலை நாட்கள் {wd}",wdZero:"⚠️ தேர்ந்த அனைத்தும் ஞாயிறு/விடுமுறை (வேலை நாள் 0)",reload:"மீண்டும் ஏற்று",syncOk:"✅ ஒத்திசைவு",syncDirty:"🟠 ஒத்திசைவில்லை — data.json Export செய்க",jsonLive:"📦 GitHub தரவு",jsonLocal:"📦 Local தரவு",jsonFail:"⚠️ புதிய data.json ஏற்ற முடியவில்லை — சேமித்த தரவு காட்டப்படுகிறது",exportedJson:"⬆️ data.json பதிவிறக்கப்பட்டது — GitHub இல் upload செய்க",confirmReload:"சேமிக்காத மாற்றங்களை நீக்கி GitHub இலிருந்து மீண்டும் ஏற்றவா?",fbTitle:"Firebase Live Sync",fbStatus:"நிலை",fbApiKey:"API Key",fbAuthDomain:"Auth Domain",fbDbUrl:"Database URL",fbProjectId:"Project ID",fbSecret:"Write secret (optional)",fbTest:"Test",fbDownload:"firebase-config.js பதிவிறக்கு",fbPushNow:"Push now",fbUseDevice:"இந்த device இல் Firebase பயன்படுத்து",fbHelp:"Firebase Console → Realtime Database → Create → Test mode → config இங்கே paste → Test → Download → GitHub இல் upload. பின் Admin திருத்தியதும் அனைவருக்கும் live update!",fbNoSdk:"⚠️ Firebase library ஏற்றப்படவில்லை (internet தேவை)",fbTestOk:"✅ இணைப்பு! Live தரவு கிடைத்தது",fbTestEmpty:"✅ இணைப்பு! Database காலி — Push now அழுத்தவும்",fbTestFail:"❌ இணைக்க முடியவில்லை — config & rules பார்க்கவும்",fbDownloaded:"⬇️ firebase-config.js பதிவிறக்கப்பட்டது — GitHub இல் upload செய்க",fbPushed:"⬆️ Firebase க்கு Push செய்யப்பட்டது",fbLive:"🔥 Live update வந்தது",fbConflict:"⚠️ புதிய live தரவு வந்தது, ஆனால் உங்கள் unsynced மாற்றங்கள் உள்ளன — உங்களுடையது வைக்கப்பட்டது. Push செய்தால் மேலெழுதப்படும்.",gTitle:"Google Drive Sync",gUrl:"Apps Script Web App URL",gSecret:"Write secret",gPoll:"Auto-refresh வினாடிகள் (10–300)",gUseDevice:"இந்த device இல் Google sync பயன்படுத்து",gHelp:"Google Drive → New → Apps Script → Code.gs paste → Deploy → Web app (Anyone) → URL + secret இங்கே paste → Test → Download → GitHub இல் upload. Data auto-refresh + Admin edits Drive இல் auto-save!",gEmpty:"✅ இணைப்பு! Drive கோப்பு காலி — Push now அழுத்தவும்",gDownloaded:"⬇️ google-config.js பதிவிறக்கப்பட்டது — GitHub இல் upload செய்க",gPushFail:"❌ Google இல் save ஆகவில்லை — URL/secret/deployment பார்க்கவும்",gDownloadBtn:"google-config.js பதிவிறக்கு",schedTab:"அட்டவணை",addSched:"அட்டவணை சேர்",editSched:"அட்டவணை திருத்து",thDate:"தேதி",thShift:"முறை",thNote:"குறிப்பு",schedSearchPh:"🔍 பெயர் / குறிப்பு தேடுக...",schedNotePh:"எ.கா. கவுண்டர் பணி",rangeHint:"{n} நாட்கள் → {n} பதிவுகள் (உள்ள தேதிகள் update)",schedForDay:"பணி அட்டவணை",onDutyToday:"இன்று பணியில்",lgSched:"பணி அட்டவணை",schedDelete:"இந்த அட்டவணை பதிவை நீக்கவா?",noPerm:"⛔ உங்கள் பாத்திரத்திற்கு அனுமதி இல்லை",role_admin:"நிர்வாகி",role_entry:"தரவு உள்ளீடு",role_scheduler:"அட்டவணையாளர்",loginUser:"பயனர்",usersTitle:"பயனர்கள்"}
 };
 const TYPES = {annual:{en:"Annual",si:"වාර්ෂික",ta:"ஆண்டு"},sick:{en:"Sick",si:"අසනීප",ta:"நோய்"},casual:{en:"Casual",si:"අනියම්",ta:"சாதாரண"},unpaid:{en:"Unpaid",si:"වැටුප් රහිත",ta:"சம்பளமில்லா"},family:{en:"Family / Other",si:"පවුල් / වෙනත්",ta:"குடும்ப / மற்ற"}};
 const STATUS = {approved:{en:"Approved",si:"අනුමත",ta:"அங்கீகரித்தது"},pending:{en:"Pending",si:"අපේක්ෂිත",ta:"நிலுவையில்"},rejected:{en:"Rejected",si:"ප්‍රතික්ෂේප",ta:"நிராகரித்தது"}};
+const SHIFTS={morning:{en:"Morning",si:"උදෑසන",ta:"காலை"},evening:{en:"Evening",si:"සවස",ta:"மாலை"},night:{en:"Night",si:"රාත්‍රී",ta:"இரவு"},full:{en:"Full Day",si:"මුළු දවස",ta:"முழு நாள்"},off:{en:"Day Off",si:"නිවාඩු දිනය",ta:"விடுமுறை நாள்"},custom:{en:"Custom",si:"වෙනත්",ta:"மற்றது"}};
 const MONTHS = {
 en:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
 si:["ජන","පෙබ","මාර්","අප්‍රේ","මැයි","ජුනි","ජුලි","අගෝ","සැප්","ඔක්","නොවැ","දෙසැ"],
@@ -493,7 +567,24 @@ const SL_HOLIDAYS_2026=[
 ];
 SL_HOLIDAYS_2026.forEach((h,i)=>h.id="Hseed"+i);
 let holidays=JSON.parse(localStorage.getItem("lc_hol_v1")||"null")||JSON.parse(JSON.stringify(SL_HOLIDAYS_2026));
+const SEED_SCHED=[
+{id:"S01",name:"Zameer",date:"2026-09-14",shift:"morning",note:""},
+{id:"S02",name:"Jamil",date:"2026-09-14",shift:"evening",note:""},
+{id:"S03",name:"Amjet",date:"2026-09-15",shift:"morning",note:""},
+{id:"S04",name:"Akram",date:"2026-09-15",shift:"evening",note:""},
+{id:"S05",name:"Manoj",date:"2026-09-16",shift:"full",note:""},
+{id:"S06",name:"Sajeewan",date:"2026-09-16",shift:"morning",note:""},
+{id:"S07",name:"Praweena",date:"2026-09-17",shift:"morning",note:""},
+{id:"S08",name:"Darshan",date:"2026-09-17",shift:"evening",note:""},
+{id:"S09",name:"Fazha",date:"2026-09-18",shift:"morning",note:""},
+{id:"S10",name:"Anuradha",date:"2026-09-18",shift:"evening",note:""},
+{id:"S11",name:"Zameer",date:"2026-09-19",shift:"full",note:"Saturday duty"},
+{id:"S12",name:"Jamil",date:"2026-09-19",shift:"full",note:"Saturday duty"}
+];
+SEED_SCHED.forEach(s=>s.created=Date.now());
+let schedules=JSON.parse(localStorage.getItem("lc_sched_v1")||"null")||JSON.parse(JSON.stringify(SEED_SCHED));
 let calY=new Date().getFullYear(),calM=new Date().getMonth(),calSel=todayStr();
+if(staff.length===0&&leaves.length>0){staff=[...new Set(leaves.map(l=>l.name))].sort();saveAll()}
 function pad2(n){return String(n).padStart(2,"0")}
 function dstr(y,m,d){return y+"-"+pad2(m+1)+"-"+pad2(d)}
 function leavesOn(ds){return leaves.filter(l=>l.status==="approved"&&l.from<=ds&&(l.to||l.from)>=ds)}
@@ -502,7 +593,20 @@ function holsOn(ds){return holidays.filter(h=>h.d===ds)}
 function holName(h){return h[lang]||h.en||""}
 
 function getPass(){return localStorage.getItem("lc_pass")||"leave2026"}
-function saveAll(){localStorage.setItem("lc_staff",JSON.stringify(staff));localStorage.setItem("lc_leaves",JSON.stringify(leaves));localStorage.setItem("lc_hol_v1",JSON.stringify(holidays))}
+let users=JSON.parse(localStorage.getItem("lc_users_v1")||"null");
+if(!users||!users.admin){users={admin:{pass:localStorage.getItem("lc_pass")||"leave2026",role:"admin"},Entry:{pass:"entry2026",role:"entry"},Zameer:{pass:"zameer2026",role:"scheduler"},Jamil:{pass:"jamil2026",role:"scheduler"}};localStorage.setItem("lc_users_v1",JSON.stringify(users))}
+let currentUser=null;
+{const su=sessionStorage.getItem("lc_user");if(su&&users[su])currentUser={name:su,role:users[su].role};else if(sessionStorage.getItem("lc_admin")==="1"){currentUser={name:"admin",role:"admin"};sessionStorage.setItem("lc_user","admin")}}
+function saveUsers(){localStorage.setItem("lc_users_v1",JSON.stringify(users))}
+function refreshAuth(){isAdmin=!!(currentUser&&currentUser.role==="admin");document.body.classList.toggle("logged",!!currentUser);document.body.classList.toggle("role-admin",isAdmin);document.body.classList.toggle("role-entry",!!(currentUser&&currentUser.role==="entry"));document.body.classList.toggle("role-scheduler",!!(currentUser&&currentUser.role==="scheduler"));document.body.classList.toggle("admin",isAdmin)}
+function canLeave(){return!!(currentUser&&(currentUser.role==="admin"||currentUser.role==="entry"))}
+function canSched(){return!!currentUser}
+function canSchedDel(){return!!(currentUser&&(currentUser.role==="admin"||currentUser.role==="scheduler"))}
+function noPerm(){toast(t("noPerm"))}
+function requireLeave(fn){if(canLeave())fn();else{openLogin();toast(currentUser?t("noPerm"):t("needLogin"))}}
+function requireSched(fn){if(canSched())fn();else{openLogin();toast(t("needLogin"))}}
+function requireSchedDel(fn){if(canSchedDel())fn();else{openLogin();toast(currentUser?t("noPerm"):t("needLogin"))}}
+function saveAll(){localStorage.setItem("lc_staff",JSON.stringify(staff));localStorage.setItem("lc_leaves",JSON.stringify(leaves));localStorage.setItem("lc_hol_v1",JSON.stringify(holidays));localStorage.setItem("lc_sched_v1",JSON.stringify(schedules))}
 function t(k){return (I18N[lang]&&I18N[lang][k])||I18N.en[k]||k}
 function diffDays(a,b){const d1=new Date(a+"T00:00:00"),d2=new Date((b||a)+"T00:00:00");return Math.max(1,Math.round((d2-d1)/86400000)+1)}
 function workingDays(a,b){
@@ -567,6 +671,8 @@ function buildFilters(){
   document.getElementById("lvName").innerHTML=staff.map(s=>`<option>${esc(s)}</option>`).join("");
   document.getElementById("lvType").innerHTML=Object.keys(TYPES).map(k=>`<option value="${k}">${TYPES[k][lang]}</option>`).join("");
   document.getElementById("lvStatus").innerHTML=Object.keys(STATUS).map(k=>`<option value="${k}">${STATUS[k][lang]}</option>`).join("");
+  document.getElementById("sName").innerHTML=`<option value="">👤 ${t("thName")}: ${t("all")}</option>`+staff.map(s=>`<option>${esc(s)}</option>`).join("");
+  document.getElementById("sShift").innerHTML=`<option value="">🛠️ ${t("thShift")}: ${t("all")}</option>`+Object.keys(SHIFTS).map(k=>`<option value="${k}">${SHIFTS[k][lang]}</option>`).join("");
 }
 
 /* ============ RENDER ============ */
@@ -576,7 +682,7 @@ function daysInMonth(lv,year,mi){
   const a=s>mS?s:mS, b=e<mE?e:mE;
   if(b<a)return 0; return Math.round((b-a)/86400000)+1;
 }
-function renderAll(){renderStats();renderDashboard();renderCalendar();renderChart();renderAll();renderTaken();renderUpcoming();renderTeam();syncAdminUI();updateSyncPill()}
+function renderAll(){renderStats();renderDashboard();renderCalendar();renderChart();renderAll();renderTaken();renderUpcoming();renderTeam();renderSched();syncAdminUI();updateSyncPill()}
 function renderStats(){
   const today=todayStr();
   document.getElementById("stStaff").textContent=staff.length;
@@ -586,12 +692,13 @@ function renderStats(){
 }
 function pillStatus(s){return `<span class="pill pill-${s}">${STATUS[s]?STATUS[s][lang]:s}</span>`}
 function pillType(k){return `<span class="pill pill-type">${TYPES[k]?TYPES[k][lang]:k}</span>`}
-function actionBtns(id){return `<div class="row-actions admin-only no-print"><button class="icon-btn edit" onclick="editLeave('${id}')" title="Edit">✏️</button><button class="icon-btn del" onclick="delLeave('${id}')" title="Delete">🗑️</button></div>`}
+function actionBtns(id){return `<div class="row-actions no-print" style="display:flex;gap:6px"><button class="icon-btn edit need-leave" onclick="editLeave('${id}')" title="Edit">✏️</button><button class="icon-btn del admin-only" onclick="delLeave('${id}')" title="Delete">🗑️</button></div>`}
 function renderDashboard(){
   const today=todayStr();
   const onT=leaves.filter(l=>l.status==="approved"&&l.from<=today&&(l.to||l.from)>=today);
   document.getElementById("todayList").innerHTML=onT.length?onT.map(l=>`<div class="list-item">${AV(l.name)}<div class="meta"><b>${esc(l.name)}</b><small>${fmt(l.from)} → ${fmt(l.to||l.from)} • ${pillType(l.type)}</small></div></div>`).join(""):`<div class="empty"><div class="big">😊</div>${t("noData")}</div>`;
   const up=leaves.filter(l=>l.status==="approved"&&l.from>today).sort((a,b)=>a.from.localeCompare(b.from)).slice(0,5);
+  {const duty=schedOn(today).filter(s=>s.shift!=="off");if(duty.length){document.getElementById("todayList").innerHTML+=`<div style="margin-top:10px"><b>🛠️ ${t("onDutyToday")} (${duty.length})</b></div>`+duty.map(s=>`<div class="list-item" style="margin-top:6px">${AV(s.name)}<div class="meta"><b>${esc(s.name)}</b>${s.note?`<small>${esc(s.note)}</small>`:""}</div>${pillShift(s.shift)}</div>`).join("")}}
   document.getElementById("nextList").innerHTML=up.length?up.map(l=>{const d=Math.ceil((new Date(l.from)-new Date(today))/86400000);const lbl=d===1?t("tomorrow"):t("inDays").replace("{n}",d);return `<div class="list-item">${AV(l.name)}<div class="meta"><b>${esc(l.name)}</b><small>${fmt(l.from)} → ${fmt(l.to||l.from)} • ${effDays(l)} ${t("days")}</small></div><span class="countdown">${lbl}</span></div>`}).join(""):`<div class="empty"><div class="big">🗓️</div>${t("noData")}</div>`;
   const per=staff.map(n=>({n,d:leaves.filter(l=>l.name===n&&l.status==="approved"&&l.from.slice(0,4)==CUR_YEAR).reduce((a,l)=>a+effDays(l),0)})).sort((a,b)=>b.d-a.d);
   const max=Math.max(1,...per.map(p=>p.d));
@@ -647,21 +754,21 @@ function filterBy(n){document.querySelector('[data-tab="all"]').click();document
 
 /* ============ AUTH ============ */
 function syncAdminUI(){
-  document.body.classList.toggle("admin",isAdmin);
-  document.getElementById("loginBtn").style.display=isAdmin?"none":"";
-  document.getElementById("logoutBtn").style.display=isAdmin?"":"none";
-  document.getElementById("modeBadge").innerHTML=(isAdmin?"✏️ ":"👁️ ")+`<span>${t(isAdmin?"adminMode":"viewMode")}</span>`;
+  refreshAuth();
+  document.getElementById("loginBtn").style.display=currentUser?"none":"";
+  document.getElementById("logoutBtn").style.display=currentUser?"":"none";
+  document.getElementById("modeBadge").innerHTML=currentUser?("✏️ "+`<span>${esc(currentUser.name)} • ${t("role_"+currentUser.role)}</span>`):("👁️ "+`<span>${t("viewMode")}</span>`);
 }
-function requireAdmin(fn){if(isAdmin){fn()}else{openLogin();toast(t("needLogin"))}}
-function openLogin(){document.getElementById("loginPass").value="";openModal("mLogin");setTimeout(()=>document.getElementById("loginPass").focus(),150)}
-function doLogin(){if(document.getElementById("loginPass").value===getPass()){isAdmin=true;sessionStorage.setItem("lc_admin","1");closeModal("mLogin");syncAdminUI();renderAll();toast(t("loginOk"))}else{toast(t("wrongPass"))}}
-function logout(){isAdmin=false;sessionStorage.removeItem("lc_admin");syncAdminUI();renderAll();toast(t("logoutOk"))}
+function requireAdmin(fn){if(isAdmin){fn()}else{openLogin();toast(currentUser?t("noPerm"):t("needLogin"))}}
+function openLogin(){document.getElementById("loginUser").innerHTML=Object.keys(users).map(u=>`<option ${currentUser&&currentUser.name===u?"selected":""}>${esc(u)}</option>`).join("");document.getElementById("loginPass").value="";openModal("mLogin");setTimeout(()=>document.getElementById("loginPass").focus(),150)}
+function doLogin(){const u=document.getElementById("loginUser").value,p=document.getElementById("loginPass").value;if(users[u]&&users[u].pass===p){currentUser={name:u,role:users[u].role};sessionStorage.setItem("lc_user",u);sessionStorage.setItem("lc_admin",users[u].role==="admin"?"1":"0");closeModal("mLogin");syncAdminUI();renderAll();toast(t("loginOk"))}else{toast(t("wrongPass"))}}
+function logout(){currentUser=null;sessionStorage.removeItem("lc_user");sessionStorage.setItem("lc_admin","0");syncAdminUI();renderAll();toast(t("logoutOk"))}
 
 /* ============ CRUD ============ */
 function openModal(id){document.getElementById(id).classList.add("open")}
 function closeModal(id){document.getElementById(id).classList.remove("open")}
 document.querySelectorAll(".modal-back").forEach(m=>m.addEventListener("click",e=>{if(e.target===m)m.classList.remove("open")}));
-function openLeaveModal(){
+function openLeaveModal(){if(!canLeave())return noPerm();
   document.getElementById("lvId").value="";document.getElementById("leaveFormTitle").textContent="➕ "+t("addLeaveTitle");
   document.getElementById("lvFrom").value=todayStr();document.getElementById("lvTo").value=todayStr();
   document.getElementById("lvDays").value=workingDays(todayStr(),todayStr());document.getElementById("lvReason").value="";
@@ -693,9 +800,9 @@ function saveLeave(){
   const days=entered, type=document.getElementById("lvType").value, reason=document.getElementById("lvReason").value.trim(), status=document.getElementById("lvStatus").value;
   if(id){const l=leaves.find(x=>x.id===id);Object.assign(l,{name,from,to,days,type,reason,status});if(manual==null)delete l.manual;else l.manual=manual}
   else{const nl={id:"L"+Date.now(),name,from,to,days,type,reason,status,created:Date.now()};if(manual!=null)nl.manual=manual;leaves.push(nl)}
-  saveAll();fbPush();closeModal("mLeave");buildFilters();renderAll();toast(t("saved"));
+  saveAll();cloudPush();closeModal("mLeave");buildFilters();renderAll();toast(t("saved"));
 }
-function editLeave(id){const l=leaves.find(x=>x.id===id);if(!l)return;
+function editLeave(id){if(!canLeave())return noPerm();const l=leaves.find(x=>x.id===id);if(!l)return;
   document.getElementById("lvId").value=l.id;document.getElementById("leaveFormTitle").textContent="✏️ "+t("editLeave");
   document.getElementById("lvName").innerHTML=staff.map(s=>`<option ${s===l.name?"selected":""}>${esc(s)}</option>`).join("");
   document.getElementById("lvFrom").value=l.from;document.getElementById("lvTo").value=l.to||l.from;
@@ -704,19 +811,21 @@ function editLeave(id){const l=leaves.find(x=>x.id===id);if(!l)return;
   updateBreakdown();
   openModal("mLeave");
 }
-function delLeave(id){if(!confirm(t("deleteConfirm")))return;leaves=leaves.filter(x=>x.id!==id);saveAll();fbPush();buildFilters();renderAll();toast(t("deleted"))}
-function openStaffModal(){document.getElementById("staffName").value="";openModal("mStaff")}
-function saveStaff(){const n=document.getElementById("staffName").value.trim();if(!n)return;if(staff.includes(n))return toast("❗ "+n);staff.push(n);staff.sort();saveAll();fbPush();closeModal("mStaff");buildFilters();renderAll();toast(t("staffAdded"))}
-function delStaff(n){if(!confirm(t("deleteStaff")))return;staff=staff.filter(s=>s!==n);leaves=leaves.filter(l=>l.name!==n);saveAll();fbPush();buildFilters();renderAll();toast(t("staffDeleted"))}
-function openPassModal(){document.getElementById("oldPass").value="";document.getElementById("newPass").value="";openModal("mPass")}
-function savePass(){const o=document.getElementById("oldPass").value,n=document.getElementById("newPass").value;if(o!==getPass())return toast(t("wrongPass"));if(n.length<4)return toast("❗ min 4");localStorage.setItem("lc_pass",n);closeModal("mPass");toast(t("passChanged"))}
-function resetDemo(){if(!confirm("↩️ ?"))return;staff=[...DEFAULT_STAFF];leaves=JSON.parse(JSON.stringify(SEED));leaves.forEach(l=>l.created=Date.now());holidays=JSON.parse(JSON.stringify(SL_HOLIDAYS_2026));saveAll();fbPush();buildFilters();renderAll();toast(t("resetDone"))}
+function delLeave(id){if(!isAdmin)return noPerm();if(!confirm(t("deleteConfirm")))return;leaves=leaves.filter(x=>x.id!==id);saveAll();cloudPush();buildFilters();renderAll();toast(t("deleted"))}
+function openStaffModal(){if(!isAdmin)return noPerm();document.getElementById("staffName").value="";openModal("mStaff")}
+function saveStaff(){const n=document.getElementById("staffName").value.trim();if(!n)return;if(staff.includes(n))return toast("❗ "+n);staff.push(n);staff.sort();saveAll();cloudPush();closeModal("mStaff");buildFilters();renderAll();toast(t("staffAdded"))}
+function delStaff(n){if(!isAdmin)return noPerm();if(!confirm(t("deleteStaff")))return;staff=staff.filter(s=>s!==n);leaves=leaves.filter(l=>l.name!==n);saveAll();cloudPush();buildFilters();renderAll();toast(t("staffDeleted"))}
+function openPassModal(){if(!currentUser)return noPerm();document.getElementById("oldPass").value="";document.getElementById("newPass").value="";openModal("mPass")}
+function savePass(){if(!currentUser)return noPerm();const o=document.getElementById("oldPass").value,n=document.getElementById("newPass").value;if(!users[currentUser.name]||users[currentUser.name].pass!==o)return toast(t("wrongPass"));if(n.length<4)return toast("❗ min 4");users[currentUser.name].pass=n;saveUsers();closeModal("mPass");toast(t("passChanged"))}
+function openUsersModal(){if(!isAdmin)return noPerm();document.getElementById("usersBody").innerHTML=Object.keys(users).map(u=>`<div class="list-item">${AV(u)}<div class="meta"><b>${esc(u)}</b><small>${t("role_"+users[u].role)}</small></div><input type="password" id="pw_${u}" placeholder="••••" style="width:110px;border:1.5px solid var(--line);border-radius:8px;padding:7px 9px;font-family:inherit"><button class="btn btn-primary btn-sm" onclick="saveUserPass('${u}')">💾</button></div>`).join("");openModal("mUsers")}
+function saveUserPass(u){if(!isAdmin)return noPerm();const v=document.getElementById("pw_"+u).value;if(!v||v.length<4)return toast("❗ min 4");users[u].pass=v;saveUsers();document.getElementById("pw_"+u).value="";toast(t("passChanged")+" — "+u)}
+function resetDemo(){if(!isAdmin)return noPerm();if(!confirm("↩️ ?"))return;staff=[...DEFAULT_STAFF];leaves=JSON.parse(JSON.stringify(SEED));leaves.forEach(l=>l.created=Date.now());holidays=JSON.parse(JSON.stringify(SL_HOLIDAYS_2026));saveAll();cloudPush();buildFilters();renderAll();toast(t("resetDone"))}
 
 /* ============ EXPORT / IMPORT ============ */
 function download(name,content,mime){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([content],{type:mime}));a.download=name;a.click()}
-function exportJSON(){const payload={app:"leave-chart",version:1,updatedAt:new Date().toISOString(),staff:staff,leaves:leaves,holidays:holidays};download("data.json",JSON.stringify(payload,null,2),"application/json");lastJsonHash=dataHash();localStorage.setItem("lc_clean_hash",lastJsonHash);updateSyncPill();toast(t("exportedJson"))}
+function exportJSON(){if(!isAdmin)return noPerm();const payload={app:"leave-chart",version:1,updatedAt:new Date().toISOString(),staff:staff,leaves:leaves,holidays:holidays,schedules:schedules};download("data.json",JSON.stringify(payload,null,2),"application/json");lastJsonHash=dataHash();localStorage.setItem("lc_clean_hash",lastJsonHash);updateSyncPill();toast(t("exportedJson"))}
 function exportCSV(){let csv="Name,From,To,Days,Type,Reason,Status\n";leaves.forEach(l=>{csv+=`"${l.name}",${l.from},${l.to||l.from},${effDays(l)},${l.type},"${(l.reason||"").replace(/"/g,'""')}",${l.status}\n`});download("leave-chart-"+CUR_YEAR+".csv",csv,"text/csv")}
-function importJSON(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!validData(d))throw 0;applyData(d);fbPush();buildFilters();renderAll();updateSyncPill();toast(t("importOk"))}catch{toast(t("importFail"))}};r.readAsText(f);e.target.value=""}
+function importJSON(e){if(!isAdmin)return noPerm();const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!validData(d))throw 0;applyData(d);cloudPush();buildFilters();renderAll();updateSyncPill();toast(t("importOk"))}catch{toast(t("importFail"))}};r.readAsText(f);e.target.value=""}
 function toast(msg){const el=document.getElementById("toast");el.textContent=msg;el.classList.add("show");clearTimeout(el._h);el._h=setTimeout(()=>el.classList.remove("show"),2400)}
 
 /* ============ MONTH CALENDAR ============ */
@@ -744,7 +853,7 @@ function renderCalendar(){
     const dow=(new Date(ds+"T00:00:00").getDay()+6)%7;
     const isSun=(dow===6),we=(dow>=5);
     const isOff=(isSun||hs.length>0);
-    const on=isOff?[]:leavesOn(ds),pd=isOff?[]:pendingOn(ds);
+    const on=isOff?[]:leavesOn(ds),pd=isOff?[]:pendingOn(ds);const sc=schedOn(ds);
     let cls="cal-day"+(other?" other":"")+((we&&!isOff)?" we":"");
     if(isOff)cls+=" hol";
     else if(on.length)cls+=" leave";
@@ -753,7 +862,7 @@ function renderCalendar(){
     if(ds===calSel)cls+=" sel";
     const tip=esc(isOff?(hs.length?hs.map(holName).join(" • "):t("sunday")):hs.map(holName).concat(on.map(l=>l.name)).join(" • "));
     const tag=hs.length?`🌟 ${esc(holName(hs[0]))}${hs.length>1?" +"+(hs.length-1):""}`:(isSun?`☀️ ${t("sunday")}`:"");
-    cells+=`<button class="${cls}" onclick="selectDayFull('${ds}')" title="${tip}"><span class="cal-num">${dayNum}</span>${tag?`<span class="cal-hol">${tag}</span>`:""}${(!isOff&&on.length)?`<span class="cal-badge">${on.length}</span>`:""}</button>`;
+    cells+=`<button class="${cls}" onclick="selectDayFull('${ds}')" title="${tip}"><span class="cal-num">${dayNum}</span>${tag?`<span class="cal-hol">${tag}</span>`:""}${(!isOff&&on.length)?`<span class="cal-badge">${on.length}</span>`:""}${sc.length?`<span class="cal-sch">🛠️${sc.length}</span>`:""}</button>`;
   }
   grid.innerHTML=cells;
   renderCalDetail();
@@ -768,31 +877,34 @@ function renderCalDetail(){
   let html=`<b>📅 ${d} ${MONTHS_FULL[lang][m-1]} ${y} (${wd})</b>`;
   if(dow===6&&!hs.length)html+=` <span class="pill" style="background:#fef08a;color:#854d0e">☀️ ${t("sunday")}</span>`;
   if(isOff)html+=` <span class="pill" style="background:#fef3c7;color:#92400e">${t("holForAll")}</span>`;
-  if(hs.length)html+=`<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">`+hs.map(h=>`<span class="pill" style="background:#fef08a;color:#854d0e">🌟 ${esc(holName(h))}${isAdmin?` <a href="#" onclick="delHoliday('${h.id}');return false" style="color:#b91c1c;text-decoration:none;font-weight:800" title="Remove">✕</a>`:""}</span>`).join("")+`</div>`;
+  if(hs.length)html+=`<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">`+hs.map(h=>`<span class="pill" style="background:#fef08a;color:#854d0e">🌟 ${esc(holName(h))}${(currentUser&&currentUser.role==="admin")?` <a href="#" onclick="delHoliday('${h.id}');return false" style="color:#b91c1c;text-decoration:none;font-weight:800" title="Remove">✕</a>`:""}</span>`).join("")+`</div>`;
   if(on.length){html+=`<div style="margin-top:10px"><b>🔴 ${t("onLeaveN").replace("{n}",on.length)}</b></div>`+on.map(l=>`<div class="list-item" style="margin-top:6px">${AV(l.name)}<div class="meta"><b>${esc(l.name)}</b><small>${fmt(l.from)} → ${fmt(l.to||l.from)} • ${esc(l.reason||"—")}</small></div>${pillType(l.type)}</div>`).join("")}
   if(pd.length){html+=`<div style="margin-top:10px"><b>🟡 ${t("pending")} (${pd.length})</b></div>`+pd.map(l=>`<div class="list-item" style="margin-top:6px">${AV(l.name)}<div class="meta"><b>${esc(l.name)}</b><small>${fmt(l.from)} → ${fmt(l.to||l.from)} • ${esc(l.reason||"—")}</small></div>${pillStatus(l.status)}</div>`).join("")}
-  if(!isOff&&!hs.length&&!on.length&&!pd.length)html+=`<div class="hint" style="margin-top:6px">${t("noLeaveDay")}</div>`;
+  const sc=schedOn(calSel);
+  if(sc.length){html+=`<div style="margin-top:10px"><b>🛠️ ${t("schedForDay")}</b></div>`+sc.map(s=>`<div class="list-item" style="margin-top:6px">${AV(s.name)}<div class="meta"><b>${esc(s.name)}</b>${s.note?`<small>${esc(s.note)}</small>`:""}</div>${pillShift(s.shift)}</div>`).join("")}
+  if(!isOff&&!hs.length&&!on.length&&!pd.length&&!sc.length)html+=`<div class="hint" style="margin-top:6px">${t("noLeaveDay")}</div>`;
   el.innerHTML=html;
 }
-function openHolModal(){document.getElementById("holDate").value=calSel||todayStr();document.getElementById("holEn").value="";document.getElementById("holSi").value="";document.getElementById("holTa").value="";openModal("mHol")}
+function openHolModal(){if(!isAdmin)return noPerm();document.getElementById("holDate").value=calSel||todayStr();document.getElementById("holEn").value="";document.getElementById("holSi").value="";document.getElementById("holTa").value="";openModal("mHol")}
 function saveHol(){
   const d=document.getElementById("holDate").value,en=document.getElementById("holEn").value.trim(),si=document.getElementById("holSi").value.trim(),ta=document.getElementById("holTa").value.trim();
   if(!d||!en)return toast("❗");
   holidays.push({id:"H"+Date.now(),d:d,en:en,si:si||en,ta:ta||en});
-  saveAll();fbPush();closeModal("mHol");renderAll();toast(t("holAdded"));
+  saveAll();cloudPush();closeModal("mHol");renderAll();toast(t("holAdded"));
 }
-function delHoliday(id){const h=holidays.find(x=>x.id===id);if(!h)return;if(!confirm("🗑️ "+holName(h)+" ?"))return;holidays=holidays.filter(x=>x.id!==id);saveAll();fbPush();renderAll();toast(t("holDeleted"))}
+function delHoliday(id){if(!isAdmin)return noPerm();const h=holidays.find(x=>x.id===id);if(!h)return;if(!confirm("🗑️ "+holName(h)+" ?"))return;holidays=holidays.filter(x=>x.id!==id);saveAll();cloudPush();renderAll();toast(t("holDeleted"))}
 
 /* ============ GITHUB data.json SYNC ============ */
 let lastJsonHash=localStorage.getItem("lc_clean_hash")||"";
 let jsonUpdatedAt=null;
 function hasSnapshot(){return !!localStorage.getItem("lc_staff")}
 function hashObj(o){const s=JSON.stringify(o);let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))|0;return "h"+(h>>>0).toString(36)+"-"+s.length}
-function dataHash(){return hashObj({staff:staff,leaves:leaves,holidays:holidays})}
+function dataHash(){return hashObj({staff:staff,leaves:leaves,holidays:holidays,schedules:schedules})}
 function validData(d){
   if(!d||typeof d!=="object")return false;
   if(!Array.isArray(d.staff)||!Array.isArray(d.leaves))return false;
   if(d.holidays!=null&&!Array.isArray(d.holidays))return false;
+  if(d.schedules!=null&&!Array.isArray(d.schedules))return false;
   if(!d.staff.every(s=>typeof s==="string"&&s.trim()))return false;
   for(const l of d.leaves){
     if(!l||typeof l!=="object")return false;
@@ -819,14 +931,15 @@ function sanitizeHol(h){
   const en=String(h.en||h.si||h.ta||"Holiday");
   return {id:String(h.id||("H"+Math.random().toString(36).slice(2))),d:h.d,en:en,si:String(h.si||en),ta:String(h.ta||en)};
 }
-function normalizeData(d){return{staff:d.staff.map(s=>s.trim()).filter(Boolean),leaves:d.leaves.map(sanitizeLeave).filter(Boolean),holidays:Array.isArray(d.holidays)?d.holidays.map(sanitizeHol).filter(Boolean):[]}}
-function applyData(d){const n=normalizeData(d);staff=n.staff;leaves=n.leaves;holidays=n.holidays;saveAll()}
+function sanitizeSched(x){if(!x||typeof x!=="object")return null;if(typeof x.name!=="string"||!x.name.trim())return null;if(!/^\d{4}-\d{2}-\d{2}$/.test(x.date||""))return null;return{id:String(x.id||("S"+Math.random().toString(36).slice(2))),name:x.name.trim(),date:x.date,shift:(SHIFTS[x.shift]?x.shift:"custom"),note:String(x.note||""),created:(+x.created||0)}}
+function normalizeData(d){return{staff:d.staff.map(s=>s.trim()).filter(Boolean),leaves:d.leaves.map(sanitizeLeave).filter(Boolean),holidays:Array.isArray(d.holidays)?d.holidays.map(sanitizeHol).filter(Boolean):[],schedules:Array.isArray(d.schedules)?d.schedules.map(sanitizeSched).filter(Boolean):[]}}
+function applyData(d){const n=normalizeData(d);staff=n.staff;leaves=n.leaves;holidays=n.holidays;schedules=n.schedules;saveAll()}
 function fmtDateTime(iso){try{const d=new Date(iso);if(isNaN(d))return "";return d.getDate()+" "+MONTHS_FULL[lang][d.getMonth()]+" "+d.getFullYear()+" "+String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")}catch(e){return ""}}
 function updateSyncPill(){
   const pill=document.getElementById("syncPill"),info=document.getElementById("jsonInfo");
   const dirty=(dataHash()!==lastJsonHash);
   if(pill){pill.textContent=dirty?t("syncDirty"):t("syncOk");pill.style.background=dirty?"#ffedd5":"#dcfce7";pill.style.color=dirty?"#9a3412":"#15803d"}
-  if(info){const dt=jsonUpdatedAt?fmtDateTime(jsonUpdatedAt):"";info.textContent=fbMode?("🔥 Live "+(fbConnected?"🟢":"🔴")+(dt?" • "+dt:"")):(jsonUpdatedAt?(t("jsonLive")+(dt?" • "+dt:"")):t("jsonLocal"))}
+  if(info){const dt=jsonUpdatedAt?fmtDateTime(jsonUpdatedAt):"";let msg=t("jsonLocal");if(jsonUpdatedAt)msg=t("jsonLive")+(dt?" • "+dt:"");if(gMode)msg="📄 Google"+(dt?" • "+dt:"");if(fbMode)msg="🔥 Live "+(fbConnected?"🟢":"🔴")+(dt?" • "+dt:"");info.textContent=msg}
 }
 async function loadFromJson(silent,force){
   try{
@@ -842,7 +955,38 @@ async function loadFromJson(silent,force){
     return "ok";
   }catch(e){updateSyncPill();if(!silent)toast(t("jsonFail"));return "fail"}
 }
-function reloadJson(){if(isAdmin&&(dataHash()!==lastJsonHash)){if(!confirm(t("confirmReload")))return}loadFromJson(false,true).then(r=>{if(r==="ok")toast(t("syncOk"))})}
+/* ============ WORK SCHEDULE ============ */
+function schedOn(ds){return schedules.filter(s=>s.date===ds)}
+function pillShift(k){const m={morning:["#dbeafe","#1d4ed8"],evening:["#fef3c7","#b45309"],night:["#e0e7ff","#3730a3"],full:["#dcfce7","#15803d"],off:["#f1f5f9","#64748b"],custom:["#f1f5f9","#475569"]};const c=m[k]||m.custom;return `<span class="pill" style="background:${c[0]};color:${c[1]}">${SHIFTS[k]?SHIFTS[k][lang]:k}</span>`}
+function schedBtns(id){return `<div class="row-actions no-print" style="display:flex;gap:6px"><button class="icon-btn edit need-sched" onclick="editSched('${id}')" title="Edit">✏️</button><button class="icon-btn del need-scheddel" onclick="delSched('${id}')" title="Delete">🗑️</button></div>`}
+function openSchedModal(){
+  if(!canSched())return noPerm();
+  document.getElementById("scId").value="";document.getElementById("schedFormTitle").textContent="➕ "+t("addSched");
+  document.getElementById("scName").innerHTML=staff.map(s=>`<option>${esc(s)}</option>`).join("");
+  document.getElementById("scFrom").value=todayStr();document.getElementById("scTo").value=todayStr();
+  document.getElementById("scShift").innerHTML=Object.keys(SHIFTS).map(k=>`<option value="${k}">${SHIFTS[k][lang]}</option>`).join("");
+  document.getElementById("scNote").value="";updateSchedHint();openModal("mSched");
+}
+function updateSchedHint(){const f=document.getElementById("scFrom").value,tt=document.getElementById("scTo").value||f,el=document.getElementById("scRangeHint");if(!f){el.textContent="";return}if(tt<f)document.getElementById("scTo").value=f;const n=diffDays(document.getElementById("scFrom").value,document.getElementById("scTo").value);el.textContent=t("rangeHint").replace("{n}",n).replace("{n}",n)}
+function saveSched(){
+  if(!canSched())return noPerm();
+  const id=document.getElementById("scId").value,name=document.getElementById("scName").value;
+  const from=document.getElementById("scFrom").value;let to=document.getElementById("scTo").value||from;
+  const shift=document.getElementById("scShift").value,note=document.getElementById("scNote").value.trim();
+  if(!name||!from)return toast("❗");
+  if(to<from)to=from;
+  if(id){const s=schedules.find(x=>x.id===id);if(s)Object.assign(s,{name:name,date:from,shift:shift,note:note})}
+  else{const e=new Date(to+"T00:00:00");for(let d=new Date(from+"T00:00:00");d<=e;d.setDate(d.getDate()+1)){const ds=d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate());const ex=schedules.find(x=>x.name===name&&x.date===ds);if(ex)Object.assign(ex,{shift:shift,note:note});else schedules.push({id:"S"+Date.now()+Math.floor(Math.random()*999),name:name,date:ds,shift:shift,note:note,created:Date.now()})}}
+  saveAll();cloudPush();closeModal("mSched");buildFilters();renderAll();toast(t("saved"));
+}
+function editSched(id){if(!canSched())return noPerm();const s=schedules.find(x=>x.id===id);if(!s)return;document.getElementById("scId").value=s.id;document.getElementById("schedFormTitle").textContent="✏️ "+t("editSched");document.getElementById("scName").innerHTML=staff.map(n=>`<option ${n===s.name?"selected":""}>${esc(n)}</option>`).join("");document.getElementById("scFrom").value=s.date;document.getElementById("scTo").value=s.date;document.getElementById("scShift").innerHTML=Object.keys(SHIFTS).map(k=>`<option value="${k}" ${k===s.shift?"selected":""}>${SHIFTS[k][lang]}</option>`).join("");document.getElementById("scNote").value=s.note||"";updateSchedHint();openModal("mSched")}
+function delSched(id){if(!canSchedDel())return noPerm();if(!confirm(t("schedDelete")))return;schedules=schedules.filter(x=>x.id!==id);saveAll();cloudPush();buildFilters();renderAll();toast(t("deleted"))}
+function renderSched(){
+  const q=(document.getElementById("sSearch").value||"").toLowerCase(),fn=document.getElementById("sName").value,fs=document.getElementById("sShift").value,fm=document.getElementById("sMonth").value;
+  const rows=schedules.filter(s=>{if(fn&&s.name!==fn)return false;if(fs&&s.shift!==fs)return false;if(fm&&s.date.slice(0,7)!==fm)return false;if(q&&!(s.name.toLowerCase().includes(q)||(s.note||"").toLowerCase().includes(q)))return false;return true}).sort((a,b)=>b.date.localeCompare(a.date));
+  document.getElementById("schedBody").innerHTML=rows.length?rows.map(s=>`<tr><td style="white-space:nowrap">${fmt(s.date)}</td><td><b>${esc(s.name)}</b></td><td>${pillShift(s.shift)}</td><td>${esc(s.note||"—")}</td><td class="no-print">${schedBtns(s.id)}</td></tr>`).join(""):`<tr><td colspan="5"><div class="empty"><div class="big">🛠️</div>${t("noData")}</div></td></tr>`;
+}
+function reloadJson(){if(currentUser&&(dataHash()!==lastJsonHash)){if(!confirm(t("confirmReload")))return}loadFromJson(false,true).then(r=>{if(gMode&&(!fbMode||!fbConnected))gLoad(false);else if(r==="ok")toast(t("syncOk"))})}
 
 /* ============ FIREBASE LIVE SYNC ============ */
 let fbMode=false,fbRef=null,fbConnected=false;
@@ -872,16 +1016,84 @@ function fbInit(){
     return true;
   }catch(e){fbMode=false;return false}
 }
-function bootSync(){loadFromJson(true,false).then(()=>{try{fbInit()}catch(e){}updateSyncPill()})}
+/* ============ GOOGLE DRIVE SYNC (Apps Script) ============ */
+let gMode=false,gPollTimer=null;
+function gCfg(){try{const c=window.GOOGLE_CONFIG;if(!c||c.enabled===false)return null;if(!c.scriptUrl||c.scriptUrl.indexOf("https://")!==0)return null;if(localStorage.getItem("lc_g_off")==="1")return null;return c}catch(e){return null}}
+function gInit(){const c=gCfg();if(!c)return false;gMode=true;gLoad(true);const secs=Math.min(300,Math.max(10,+c.pollSeconds||30));if(gPollTimer)clearInterval(gPollTimer);gPollTimer=setInterval(()=>{if(!fbMode||!fbConnected)gLoad(true)},secs*1000);updateSyncPill();return true}
+async function gLoad(silent){
+  try{
+    const c=gCfg();if(!c)throw 0;
+    const r=await fetch(c.scriptUrl+"?action=read&v="+Date.now(),{cache:"no-store"});
+    if(!r.ok)throw 0;
+    const d=await r.json();
+    if(!d||d.ok!==true||!validData(d))throw 0;
+    const clean=localStorage.getItem("lc_clean_hash")||"";
+    const localH=dataHash();
+    const n=normalizeData(d);
+    if(hashObj(n)===localH){if(d.updatedAt)jsonUpdatedAt=d.updatedAt;lastJsonHash=localH;localStorage.setItem("lc_clean_hash",localH);updateSyncPill();return "ok"}
+    if(localH!==clean){updateSyncPill();if(!silent)toast(t("fbConflict"));return "conflict"}
+    staff=n.staff;leaves=n.leaves;holidays=n.holidays;saveAll();
+    jsonUpdatedAt=d.updatedAt||null;
+    lastJsonHash=dataHash();localStorage.setItem("lc_clean_hash",lastJsonHash);
+    buildFilters();renderAll();
+    toast(silent?t("fbLive"):t("syncOk"));
+    return "ok";
+  }catch(e){updateSyncPill();if(!silent)toast(t("jsonFail"));return "fail"}
+}
+async function gPush(){
+  if(!gMode)return;
+  const c=gCfg();if(!c)return;
+  try{
+    const payload={action:"write",secret:c.secret||"",updatedAt:new Date().toISOString(),staff:staff,leaves:leaves,holidays:holidays,schedules:schedules};
+    await fetch(c.scriptUrl,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain"},body:JSON.stringify(payload)});
+    await new Promise(r=>setTimeout(r,1500));
+    const r2=await fetch(c.scriptUrl+"?action=read&v="+Date.now(),{cache:"no-store"});
+    const d=await r2.json();
+    if(d&&d.ok===true&&d.updatedAt===payload.updatedAt){jsonUpdatedAt=d.updatedAt;lastJsonHash=dataHash();localStorage.setItem("lc_clean_hash",lastJsonHash);updateSyncPill()}
+    else toast(t("gPushFail"));
+  }catch(e){toast(t("gPushFail"))}
+}
+function cloudPush(){if(fbMode&&fbRef)fbPush();else if(gMode)gPush()}
+function openGModal(){if(!isAdmin)return noPerm();
+  const c=(window.GOOGLE_CONFIG&&window.GOOGLE_CONFIG.scriptUrl)?window.GOOGLE_CONFIG:{};
+  document.getElementById("gUrl").value=c.scriptUrl||"";
+  document.getElementById("gSecret").value=c.secret||"";
+  document.getElementById("gPoll").value=(c.pollSeconds||30);
+  document.getElementById("gUse").checked=(localStorage.getItem("lc_g_off")!=="1");
+  document.getElementById("gStatusLine").textContent=gMode?"📄 Google active":(gCfg()?"📄 Configured (Firebase has priority)":"📄 Google not configured");
+  openModal("mG");
+}
+function gFormVals(){return{enabled:true,scriptUrl:document.getElementById("gUrl").value.trim(),secret:document.getElementById("gSecret").value,pollSeconds:Math.min(300,Math.max(10,parseInt(document.getElementById("gPoll").value)||30))}}
+async function gTest(){
+  const u=document.getElementById("gUrl").value.trim();
+  if(!u||u.indexOf("https://")!==0)return toast("❗");
+  toast("📄 …");
+  try{
+    const r=await fetch(u+"?action=read&v="+Date.now(),{cache:"no-store"});
+    const d=await r.json();
+    if(d&&d.ok===true&&validData(d))toast(t("fbTestOk"));
+    else if(d&&d.ok===false&&d.error==="empty")toast(t("gEmpty"));
+    else toast(t("fbTestFail"));
+  }catch(e){toast(t("fbTestFail"))}
+}
+function gDownload(){if(!isAdmin)return noPerm();
+  const c=gFormVals();
+  if(!c.scriptUrl||c.scriptUrl.indexOf("https://")!==0)return toast("❗");
+  download("google-config.js","// Google Apps Script backend config for Leave Chart.\nwindow.GOOGLE_CONFIG = "+JSON.stringify(c,null,2)+";\n","text/javascript");
+  toast(t("gDownloaded"));
+}
+function gPushNow(){if(!isAdmin)return noPerm();if(!gMode)return toast(t("fbTestFail"));gPush();toast(t("fbPushed"))}
+function gToggleDevice(){if(document.getElementById("gUse").checked)localStorage.removeItem("lc_g_off");else localStorage.setItem("lc_g_off","1");location.reload()}
+function bootSync(){loadFromJson(true,false).then(()=>{let fb=false;try{fb=fbInit()}catch(e){}if(!fb){try{gInit()}catch(e){}}updateSyncPill()})}
 function fbPush(){
   if(!fbMode||!fbRef)return;
   try{
-    const payload={staff:staff,leaves:leaves,holidays:holidays,updatedAt:new Date().toISOString()};
+    const payload={staff:staff,leaves:leaves,holidays:holidays,schedules:schedules,updatedAt:new Date().toISOString()};
     const c=fbCfg();if(c&&c.writeSecret)payload.secret=c.writeSecret;
     fbRef.set(payload).catch(()=>{});
   }catch(e){}
 }
-function openFbModal(){
+function openFbModal(){if(!isAdmin)return noPerm();
   const c=(window.FIREBASE_CONFIG&&window.FIREBASE_CONFIG.apiKey)?window.FIREBASE_CONFIG:{};
   document.getElementById("fbApiKey").value=c.apiKey||"";
   document.getElementById("fbAuthDomain").value=c.authDomain||"";
@@ -907,13 +1119,13 @@ function fbTest(){
     setTimeout(()=>finish(false),15000);
   }catch(e){finish(false)}
 }
-function fbDownload(){
+function fbDownload(){if(!isAdmin)return noPerm();
   const c=fbFormVals();
   if(!c.apiKey||!c.databaseURL)return toast("❗");
   download("firebase-config.js","// Firebase Realtime Database config for Leave Chart (safe to host publicly - protect data via Database Rules).\nwindow.FIREBASE_CONFIG = "+JSON.stringify(c,null,2)+";\n","text/javascript");
   toast(t("fbDownloaded"));
 }
-function fbPushNow(){if(!fbMode||!fbRef)return toast(t("fbTestFail"));fbPush();toast(t("fbPushed"))}
+function fbPushNow(){if(!isAdmin)return noPerm();if((!fbMode||!fbRef)&&!gMode)return toast(t("fbTestFail"));cloudPush();toast(t("fbPushed"))}
 function fbToggleDevice(){if(document.getElementById("fbUse").checked)localStorage.removeItem("lc_fb_off");else localStorage.setItem("lc_fb_off","1");location.reload()}
 
 applyLang(); syncAdminUI(); bootSync();

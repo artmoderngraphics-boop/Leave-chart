@@ -1,7 +1,7 @@
 {
   "app": "leave-chart",
   "version": 1,
-  "updatedAt": "2026-09-11T08:35:47.034Z",
+  "updatedAt": "2026-09-14T06:43:55.637Z",
   "staff": [
     "Zameer",
     "Jamil",
@@ -583,6 +583,104 @@
       "en": "Christmas Day",
       "si": "නත්තල් දිනය",
       "ta": "நத்தார் தினம்"
+    }
+  ],
+  "schedules": [
+    {
+      "id": "S01",
+      "name": "Zameer",
+      "date": "2026-09-14",
+      "shift": "morning",
+      "note": "",
+      "created": 1789368235608
+    },
+    {
+      "id": "S02",
+      "name": "Jamil",
+      "date": "2026-09-14",
+      "shift": "evening",
+      "note": "",
+      "created": 1789368235608
+    },
+    {
+      "id": "S03",
+      "name": "Amjet",
+      "date": "2026-09-15",
+      "shift": "morning",
+      "note": "",
+      "created": 1789368235608
+    },
+    {
+      "id": "S04",
+      "name": "Akram",
+      "date": "2026-09-15",
+      "shift": "evening",
+      "note": "",
+      "created": 1789368235608
+    },
+    {
+      "id": "S05",
+      "name": "Manoj",
+      "date": "2026-09-16",
+      "shift": "full",
+      "note": "",
+      "created": 1789368235608
+    },
+    {
+      "id": "S06",
+      "name": "Sajeewan",
+      "date": "2026-09-16",
+      "shift": "morning",
+      "note": "",
+      "created": 1789368235608
+    },
+    {
+      "id": "S07",
+      "name": "Praweena",
+      "date": "2026-09-17",
+      "shift": "morning",
+      "note": "",
+      "created": 1789368235608
+    },
+    {
+      "id": "S08",
+      "name": "Darshan",
+      "date": "2026-09-17",
+      "shift": "evening",
+      "note": "",
+      "created": 1789368235608
+    },
+    {
+      "id": "S09",
+      "name": "Fazha",
+      "date": "2026-09-18",
+      "shift": "morning",
+      "note": "",
+      "created": 1789368235608
+    },
+    {
+      "id": "S10",
+      "name": "Anuradha",
+      "date": "2026-09-18",
+      "shift": "evening",
+      "note": "",
+      "created": 1789368235608
+    },
+    {
+      "id": "S11",
+      "name": "Zameer",
+      "date": "2026-09-19",
+      "shift": "full",
+      "note": "Saturday duty",
+      "created": 1789368235608
+    },
+    {
+      "id": "S12",
+      "name": "Jamil",
+      "date": "2026-09-19",
+      "shift": "full",
+      "note": "Saturday duty",
+      "created": 1789368235608
     }
   ]
 }
