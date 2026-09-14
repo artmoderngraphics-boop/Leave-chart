@@ -1,7 +1,7 @@
 {
   "app": "leave-chart",
   "version": 1,
-  "updatedAt": "2026-09-14T09:44:03.824Z",
+  "updatedAt": "2026-09-14T06:43:55.637Z",
   "staff": [
     "Zameer",
     "Jamil",
@@ -16,15 +16,389 @@
   ],
   "leaves": [
     {
-      "id": "L1789378280265",
-      "name": "Anuradha",
-      "from": "2026-09-19",
-      "to": "2026-09-19",
+      "id": "L01",
+      "name": "Zameer",
+      "from": "2026-01-05",
+      "to": "2026-01-06",
+      "days": 2,
+      "type": "annual",
+      "reason": "Family trip",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L02",
+      "name": "Zameer",
+      "from": "2026-04-13",
+      "to": "2026-04-14",
+      "days": 2,
+      "type": "annual",
+      "reason": "Avurudu",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L03",
+      "name": "Zameer",
+      "from": "2026-07-20",
+      "to": "2026-07-20",
+      "days": 1,
+      "type": "sick",
+      "reason": "Fever",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L04",
+      "name": "Zameer",
+      "from": "2026-10-20",
+      "to": "2026-10-22",
+      "days": 3,
+      "type": "annual",
+      "reason": "Family wedding",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L05",
+      "name": "Jamil",
+      "from": "2026-02-10",
+      "to": "2026-02-10",
+      "days": 1,
+      "type": "sick",
+      "reason": "Medical",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L06",
+      "name": "Jamil",
+      "from": "2026-05-15",
+      "to": "2026-05-15",
       "days": 1,
       "type": "casual",
-      "reason": "Family",
+      "reason": "Personal work",
       "status": "approved",
-      "created": 1789378280265
+      "created": 1789115747034
+    },
+    {
+      "id": "L07",
+      "name": "Jamil",
+      "from": "2026-09-10",
+      "to": "2026-09-12",
+      "days": 3,
+      "type": "sick",
+      "reason": "Flu",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L08",
+      "name": "Jamil",
+      "from": "2026-11-05",
+      "to": "2026-11-05",
+      "days": 1,
+      "type": "annual",
+      "reason": "Family event",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L09",
+      "name": "Amjet",
+      "from": "2026-03-02",
+      "to": "2026-03-03",
+      "days": 2,
+      "type": "annual",
+      "reason": "Trip",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L10",
+      "name": "Amjet",
+      "from": "2026-06-18",
+      "to": "2026-06-18",
+      "days": 1,
+      "type": "casual",
+      "reason": "Personal",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L11",
+      "name": "Amjet",
+      "from": "2026-09-11",
+      "to": "2026-09-11",
+      "days": 1,
+      "type": "annual",
+      "reason": "Private matter",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L12",
+      "name": "Amjet",
+      "from": "2026-12-15",
+      "to": "2026-12-16",
+      "days": 2,
+      "type": "annual",
+      "reason": "Year-end trip",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L13",
+      "name": "Akram",
+      "from": "2026-01-20",
+      "to": "2026-01-20",
+      "days": 1,
+      "type": "casual",
+      "reason": "Personal",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L14",
+      "name": "Akram",
+      "from": "2026-08-03",
+      "to": "2026-08-04",
+      "days": 2,
+      "type": "sick",
+      "reason": "Medical",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L15",
+      "name": "Akram",
+      "from": "2026-10-05",
+      "to": "2026-10-06",
+      "days": 2,
+      "type": "annual",
+      "reason": "Family visit",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L16",
+      "name": "Manoj",
+      "from": "2026-04-02",
+      "to": "2026-04-02",
+      "days": 1,
+      "type": "annual",
+      "reason": "Personal",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L17",
+      "name": "Manoj",
+      "from": "2026-07-10",
+      "to": "2026-07-10",
+      "days": 1,
+      "type": "sick",
+      "reason": "Fever",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L18",
+      "name": "Manoj",
+      "from": "2026-09-25",
+      "to": "2026-09-26",
+      "days": 2,
+      "type": "annual",
+      "reason": "Wedding",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L19",
+      "name": "Sajeewan",
+      "from": "2026-02-14",
+      "to": "2026-02-14",
+      "days": 1,
+      "type": "annual",
+      "reason": "Personal",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L20",
+      "name": "Sajeewan",
+      "from": "2026-05-20",
+      "to": "2026-05-21",
+      "days": 2,
+      "type": "sick",
+      "reason": "Medical",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L21",
+      "name": "Sajeewan",
+      "from": "2026-11-10",
+      "to": "2026-11-12",
+      "days": 3,
+      "type": "annual",
+      "reason": "Trip",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L22",
+      "name": "Praweena",
+      "from": "2026-03-15",
+      "to": "2026-03-15",
+      "days": 1,
+      "type": "sick",
+      "reason": "Medical",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L23",
+      "name": "Praweena",
+      "from": "2026-06-05",
+      "to": "2026-06-06",
+      "days": 2,
+      "type": "annual",
+      "reason": "Family trip",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L24",
+      "name": "Praweena",
+      "from": "2026-09-08",
+      "to": "2026-09-08",
+      "days": 1,
+      "type": "casual",
+      "reason": "Personal",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L25",
+      "name": "Praweena",
+      "from": "2026-10-12",
+      "to": "2026-10-12",
+      "days": 1,
+      "type": "annual",
+      "reason": "Event",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L26",
+      "name": "Darshan",
+      "from": "2026-01-12",
+      "to": "2026-01-12",
+      "days": 1,
+      "type": "annual",
+      "reason": "Personal",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L27",
+      "name": "Darshan",
+      "from": "2026-07-25",
+      "to": "2026-07-25",
+      "days": 1,
+      "type": "casual",
+      "reason": "Personal work",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L28",
+      "name": "Darshan",
+      "from": "2026-12-01",
+      "to": "2026-12-03",
+      "days": 3,
+      "type": "annual",
+      "reason": "Year-end holiday",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L29",
+      "name": "Fazha",
+      "from": "2026-04-25",
+      "to": "2026-04-25",
+      "days": 1,
+      "type": "sick",
+      "reason": "Medical",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L30",
+      "name": "Fazha",
+      "from": "2026-08-20",
+      "to": "2026-08-21",
+      "days": 2,
+      "type": "annual",
+      "reason": "Family visit",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L31",
+      "name": "Fazha",
+      "from": "2026-09-30",
+      "to": "2026-10-01",
+      "days": 2,
+      "type": "annual",
+      "reason": "Trip",
+      "status": "pending",
+      "created": 1789115747034
+    },
+    {
+      "id": "L32",
+      "name": "Fazha",
+      "from": "2026-11-20",
+      "to": "2026-11-20",
+      "days": 1,
+      "type": "annual",
+      "reason": "Event",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L33",
+      "name": "Anuradha",
+      "from": "2026-02-28",
+      "to": "2026-02-28",
+      "days": 1,
+      "type": "casual",
+      "reason": "Personal",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L34",
+      "name": "Anuradha",
+      "from": "2026-06-30",
+      "to": "2026-07-01",
+      "days": 2,
+      "type": "annual",
+      "reason": "Family trip",
+      "status": "approved",
+      "created": 1789115747034
+    },
+    {
+      "id": "L35",
+      "name": "Anuradha",
+      "from": "2026-10-30",
+      "to": "2026-10-30",
+      "days": 1,
+      "type": "casual",
+      "reason": "Personal work",
+      "status": "pending",
+      "created": 1789115747034
     }
   ],
   "holidays": [
@@ -211,5 +585,102 @@
       "ta": "நத்தார் தினம்"
     }
   ],
-  "schedules": []
+  "schedules": [
+    {
+      "id": "S01",
+      "name": "Zameer",
+      "date": "2026-09-14",
+      "shift": "morning",
+      "note": "",
+      "created": 1789368235608
+    },
+    {
+      "id": "S02",
+      "name": "Jamil",
+      "date": "2026-09-14",
+      "shift": "evening",
+      "note": "",
+      "created": 1789368235608
+    },
+    {
+      "id": "S03",
+      "name": "Amjet",
+      "date": "2026-09-15",
+      "shift": "morning",
+      "note": "",
+      "created": 1789368235608
+    },
+    {
+      "id": "S04",
+      "name": "Akram",
+      "date": "2026-09-15",
+      "shift": "evening",
+      "note": "",
+      "created": 1789368235608
+    },
+    {
+      "id": "S05",
+      "name": "Manoj",
+      "date": "2026-09-16",
+      "shift": "full",
+      "note": "",
+      "created": 1789368235608
+    },
+    {
+      "id": "S06",
+      "name": "Sajeewan",
+      "date": "2026-09-16",
+      "shift": "morning",
+      "note": "",
+      "created": 1789368235608
+    },
+    {
+      "id": "S07",
+      "name": "Praweena",
+      "date": "2026-09-17",
+      "shift": "morning",
+      "note": "",
+      "created": 1789368235608
+    },
+    {
+      "id": "S08",
+      "name": "Darshan",
+      "date": "2026-09-17",
+      "shift": "evening",
+      "note": "",
+      "created": 1789368235608
+    },
+    {
+      "id": "S09",
+      "name": "Fazha",
+      "date": "2026-09-18",
+      "shift": "morning",
+      "note": "",
+      "created": 1789368235608
+    },
+    {
+      "id": "S10",
+      "name": "Anuradha",
+      "date": "2026-09-18",
+      "shift": "evening",
+      "note": "",
+      "created": 1789368235608
+    },
+    {
+      "id": "S11",
+      "name": "Zameer",
+      "date": "2026-09-19",
+      "shift": "full",
+      "note": "Saturday duty",
+      "created": 1789368235608
+    },
+    {
+      "id": "S12",
+      "name": "Jamil",
+      "date": "2026-09-19",
+      "shift": "full",
+      "note": "Saturday duty",
+      "created": 1789368235608
+    }
+  ]
 }
