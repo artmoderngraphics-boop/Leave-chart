@@ -339,7 +339,7 @@ body.admin .lock-note{display:none}
   </div>
   <div class="footer">
     <span data-i18n="footer1">Leave Chart • Everyone can view, editing needs password</span><br>
-    <span data-i18n="footer2">Data is saved in this browser. Use Export JSON as backup before clearing browser data.</span> <span id="lcBuild" style="opacity:.55">v2026.09.15b</span>
+    <span data-i18n="footer2">Data is saved in this browser. Use Export JSON as backup before clearing browser data.</span> <span id="lcBuild" style="opacity:.55">v2026.09.15c</span>
   </div>
 </div>
 
@@ -687,7 +687,7 @@ function daysInMonth(lv,year,mi){
   const a=s>mS?s:mS, b=e<mE?e:mE;
   if(b<a)return 0; return Math.round((b-a)/86400000)+1;
 }
-function renderAll(){["renderStats","renderDashboard","renderCalendar","renderChart","renderAll","renderTaken","renderUpcoming","renderTeam","renderSched","syncAdminUI","updateSyncPill"].forEach(f=>{try{window[f]()}catch(e){console.error(f,e);dbgErr(f+": "+(e&&e.message||e))}})}
+function renderAll(){try{var _el=document.getElementById("lcBuild");if(_el&&_el.textContent.length<60)_el.textContent+=" R"}catch(_){}try{renderStats()}catch(e){console.error("renderStats",e);dbgErr("renderStats: "+(e&&e.message||e))}try{renderDashboard()}catch(e){console.error("renderDashboard",e);dbgErr("renderDashboard: "+(e&&e.message||e))}try{renderCalendar()}catch(e){console.error("renderCalendar",e);dbgErr("renderCalendar: "+(e&&e.message||e))}try{renderChart()}catch(e){console.error("renderChart",e);dbgErr("renderChart: "+(e&&e.message||e))}try{renderAll()}catch(e){console.error("renderAll",e);dbgErr("renderAll: "+(e&&e.message||e))}try{renderTaken()}catch(e){console.error("renderTaken",e);dbgErr("renderTaken: "+(e&&e.message||e))}try{renderUpcoming()}catch(e){console.error("renderUpcoming",e);dbgErr("renderUpcoming: "+(e&&e.message||e))}try{renderTeam()}catch(e){console.error("renderTeam",e);dbgErr("renderTeam: "+(e&&e.message||e))}try{renderSched()}catch(e){console.error("renderSched",e);dbgErr("renderSched: "+(e&&e.message||e))}try{syncAdminUI()}catch(e){console.error("syncAdminUI",e);dbgErr("syncAdminUI: "+(e&&e.message||e))}try{updateSyncPill()}catch(e){console.error("updateSyncPill",e);dbgErr("updateSyncPill: "+(e&&e.message||e))}}
 function renderStats(){
   const today=todayStr();
   document.getElementById("stStaff").textContent=staff.length;
@@ -838,7 +838,7 @@ function calPrev(){calM--;if(calM<0){calM=11;calY--}renderCalendar()}
 function calNext(){calM++;if(calM>11){calM=0;calY++}renderCalendar()}
 function calToday(){const n=new Date();calY=n.getFullYear();calM=n.getMonth();calSel=todayStr();renderCalendar()}
 function selectDayFull(ds){const p=ds.split("-");calY=+p[0];calM=+p[1]-1;calSel=ds;renderCalendar()}
-function renderCalendar(){
+function renderCalendar(){try{var _el=document.getElementById("lcBuild");if(_el&&_el.textContent.length<60)_el.textContent+=" C"}catch(_){}
   const title=document.getElementById("calTitle");
   if(title)title.textContent=MONTHS_FULL[lang][calM]+" "+calY;
   const grid=document.getElementById("calGrid");if(!grid)return;
@@ -1134,7 +1134,7 @@ function fbDownload(){if(!isAdmin)return noPerm();
 function fbPushNow(){if(!isAdmin)return noPerm();if((!fbMode||!fbRef)&&!gMode)return toast(t("fbTestFail"));cloudPush();toast(t("fbPushed"))}
 function fbToggleDevice(){if(document.getElementById("fbUse").checked)localStorage.removeItem("lc_fb_off");else localStorage.setItem("lc_fb_off","1");location.reload()}
 
-try{applyLang()}catch(e){console.error("boot",e);dbgErr("boot: "+(e&&e.message||e));try{renderAll()}catch(_){}}try{syncAdminUI()}catch(e){console.error("boot",e);dbgErr("boot-admin: "+(e&&e.message||e))}try{bootSync()}catch(e){console.error("boot",e);dbgErr("boot-sync: "+(e&&e.message||e))}
+try{applyLang()}catch(e){console.error("boot",e);dbgErr("boot: "+(e&&e.message||e));try{renderAll()}catch(_){}}try{syncAdminUI()}catch(e){console.error("boot",e);dbgErr("boot-admin: "+(e&&e.message||e))}try{bootSync()}catch(e){console.error("boot",e);dbgErr("boot-sync: "+(e&&e.message||e))};try{var _el=document.getElementById("lcBuild");if(_el&&_el.textContent.length<60)_el.textContent+=" \u2713"}catch(_){}
 </script>
 </body>
 </html>
