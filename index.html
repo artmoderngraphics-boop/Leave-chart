@@ -339,7 +339,7 @@ body.admin .lock-note{display:none}
   </div>
   <div class="footer">
     <span data-i18n="footer1">Leave Chart • Everyone can view, editing needs password</span><br>
-    <span data-i18n="footer2">Data is saved in this browser. Use Export JSON as backup before clearing browser data.</span> <span id="lcBuild" style="opacity:.55">v2026.09.15d</span>
+    <span data-i18n="footer2">Data is saved in this browser. Use Export JSON as backup before clearing browser data.</span> <span id="lcBuild" style="opacity:.55">v2026.09.15e</span>
   </div>
 </div>
 
@@ -1134,7 +1134,7 @@ function fbDownload(){if(!isAdmin)return noPerm();
 function fbPushNow(){if(!isAdmin)return noPerm();if((!fbMode||!fbRef)&&!gMode)return toast(t("fbTestFail"));cloudPush();toast(t("fbPushed"))}
 function fbToggleDevice(){if(document.getElementById("fbUse").checked)localStorage.removeItem("lc_fb_off");else localStorage.setItem("lc_fb_off","1");location.reload()}
 
-try{applyLang()}catch(e){console.error("boot",e);dbgErr("boot: "+(e&&e.message||e));try{renderAll()}catch(_){}}try{syncAdminUI()}catch(e){console.error("boot",e);dbgErr("boot-admin: "+(e&&e.message||e))}try{bootSync()}catch(e){console.error("boot",e);dbgErr("boot-sync: "+(e&&e.message||e))};try{var _el=document.getElementById("lcBuild");if(_el&&_el.textContent.length<60)_el.textContent+=" \u2713"}catch(_){};try{if(document.title.length<80)document.title+=" \u2713"}catch(_){}
+try{applyLang()}catch(e){console.error("boot",e);dbgErr("boot: "+(e&&e.message||e));try{renderAll()}catch(_){}}try{syncAdminUI()}catch(e){console.error("boot",e);dbgErr("boot-admin: "+(e&&e.message||e))}try{bootSync()}catch(e){console.error("boot",e);dbgErr("boot-sync: "+(e&&e.message||e))};try{var _el=document.getElementById("lcBuild");if(_el&&_el.textContent.length<60)_el.textContent+=" \u2713"}catch(_){};try{if(document.title.length<80)document.title+=" \u2713"}catch(_){};setTimeout(function(){try{var _e2=document.getElementById("lcBuild");if(_e2&&_e2.textContent.length<60)_e2.textContent+=" S"}catch(_){}try{if(document.title.length<80)document.title+=" S"}catch(_){}try{if(!document.getElementById("calGrid").innerHTML)renderAll()}catch(e){dbgErr("safety: "+(e&&e.message||e))}},1500)
 </script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a3b6052479f8b95e',t:'MTc4OTQ1ODQxMg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
