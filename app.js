@@ -1,0 +1,666 @@
+
+window.addEventListener("error",function(e){try{const m=String((e&&e.message)||"Error");const now=Date.now();if(window._lastErr===m&&now-window._lastErrT<5000)return;window._lastErr=m;window._lastErrT=now;toast("⚠️ "+m)}catch(_){}});
+/* ============ I18N ============ */
+const I18N = {
+en:{appTitle:"Staff Leave Chart",appSubtitle:"Viewable by everyone • Editing is password protected",viewMode:"View mode",adminMode:"Edit mode",login:"Edit Login",logout:"Logout",totalStaff:"Total staff",takenDays:"Working days taken",upcomingDays:"Upcoming working days",onLeaveToday:"On leave today",dashboard:"Dashboard",yearChart:"Year Chart",allLeaves:"All Leaves",takenTab:"Taken",upcomingTab:"Upcoming",team:"Team",lockNote:"Everyone can view. To add / edit / delete, press “Edit Login” and enter the password.",addLeave:"Add Leave",addStaff:"Add Staff",print:"Print",changePass:"Password",reset:"Reset",nextLeaves:"Next approved leaves",daysPerPerson:"Working days per person",recentLeaves:"Recently added",year:"Year",chartHint:"Numbers = approved working days in that month (Sundays & govt holidays excluded). Click a row name to filter All Leaves.",searchPh:"🔍 Search name / reason...",thName:"Name",thFrom:"From",thTo:"To",thDays:"Days",thType:"Type",thReason:"Reason",thStatus:"Status",thAction:"Action",takenHint:"Approved working days taken within the selected year (up to today).",upHint:"Future approved working days (after today), sorted by nearest date.",teamHint:"Click a name card to see that person's leaves.",footer1:"Leave Chart • Everyone can view, editing needs password",footer2:"Data is saved in this browser. Use Export JSON as backup before clearing browser data.",loginTitle:"Editor Login",password:"Password",passPh:"Enter edit password",defaultPassHint:"Default logins: admin/leave2026, Entry/entry2026, Zameer/zameer2026, Jamil/jamil2026 — change after first login.",cancel:"Cancel",loginBtn:"Login",reasonPh:"e.g. Family trip / Medical",save:"Save",currentPass:"Current password",newPass:"New password",all:"All",noData:"No records found.",days:"days",day:"day",inDays:"in {n} days",tomorrow:"Tomorrow",total:"Total",taken:"Taken",upcoming:"Upcoming",pending:"Pending",deleteConfirm:"Delete this leave record?",deleteStaff:"Delete staff member and ALL their leaves?",wrongPass:"❌ Wrong password",loginOk:"✅ Welcome! Edit mode ON",logoutOk:"Logged out. View mode.",saved:"✅ Saved",deleted:"🗑️ Deleted",staffAdded:"✅ Staff added",staffDeleted:"🗑️ Staff deleted",passChanged:"✅ Password changed",resetDone:"↩️ Demo data restored",importOk:"✅ Imported successfully",importFail:"❌ Invalid file",needLogin:"🔐 Please login first",editLeave:"Edit Leave",addLeaveTitle:"Add Leave",monthCal:"Month Calendar",thisMonth:"This month",lgLeave:"On leave (approved)",lgHol:"Sunday / Government holiday",sunday:"Sunday",holForAll:"Holiday for everyone",lgBoth:"Leave + Holiday",lgPend:"Pending leave",lgToday:"Today",govHol:"Government holiday",onLeaveN:"{n} on leave",noLeaveDay:"No leaves on this day",addHoliday:"Add Holiday",holDate:"Date",holNameEn:"Name (English)",holNameSi:"Name (Sinhala)",holNameTa:"Name (Tamil)",holAdded:"✅ Holiday added",holDeleted:"🗑️ Holiday removed",slHolNote:"Sri Lanka government holidays 2026 included (Poya, festivals & special days). Admin can add more",wdBreak:"📅 {cal} calendar days − {off} off days = {wd} working days",wdZero:"⚠️ All selected dates are Sundays/holidays (0 working days)",reload:"Reload",syncOk:"✅ Synced",syncDirty:"🟠 Unsynced — Export data.json",jsonLive:"📦 GitHub data",jsonLocal:"📦 Local data",jsonFail:"⚠️ Could not load latest data.json — showing saved data",exportedJson:"⬆️ data.json downloaded — upload it to GitHub",confirmReload:"Discard unsynced changes and reload from GitHub?",fbTitle:"Firebase Live Sync",fbStatus:"Status",fbApiKey:"API Key",fbAuthDomain:"Auth Domain",fbDbUrl:"Database URL",fbProjectId:"Project ID",fbSecret:"Write secret (optional)",fbTest:"Test",fbDownload:"Download firebase-config.js",fbPushNow:"Push now",fbUseDevice:"Use Firebase on this device",fbHelp:"Firebase Console → Realtime Database → Create → Test mode → paste config here → Test → Download → upload to GitHub. After that, Admin edits sync live to everyone!",fbNoSdk:"⚠️ Firebase library not loaded (need internet)",fbTestOk:"✅ Connected! Live data found",fbTestEmpty:"✅ Connected! Database empty — press Push now",fbTestFail:"❌ Connection failed — check config & rules",fbDownloaded:"⬇️ firebase-config.js downloaded — upload to GitHub",fbPushed:"⬆️ Pushed to Firebase",fbLive:"🔥 Live update received",fbConflict:"⚠️ New live data arrived, but you have unsynced edits — kept yours. Push to overwrite.",gTitle:"Google Drive Sync",gUrl:"Apps Script Web App URL",gSecret:"Write secret",gPoll:"Auto-refresh seconds (10–300)",gUseDevice:"Use Google sync on this device",gHelp:"Google Drive → New → Apps Script → paste Code.gs → Deploy → Web app (Anyone) → paste URL + secret here → Test → Download → upload to GitHub. Data auto-refreshes + Admin edits auto-save to Drive!",gEmpty:"✅ Connected! Drive file empty — press Push now",gDownloaded:"⬇️ google-config.js downloaded — upload to GitHub",gPushFail:"❌ Save to Google failed — check URL/secret/deployment",gDownloadBtn:"Download google-config.js",schedTab:"Schedule",addSched:"Add Schedule",editSched:"Edit Schedule",thDate:"Date",thShift:"Shift",thNote:"Note",schedSearchPh:"🔍 Search name / note...",schedNotePh:"e.g. Counter duty",rangeHint:"{n} days → {n} entries (existing dates updated)",schedForDay:"Work schedule",onDutyToday:"On duty today",lgSched:"Work schedule",schedDelete:"Delete this schedule entry?",noPerm:"⛔ No permission for your role",role_admin:"Admin",role_entry:"Data Entry",role_scheduler:"Scheduler",loginUser:"User",usersTitle:"Users",jsonEmpty:"⚠️ data.json is empty on server — kept current data"},
+si:{appTitle:"නිවාඩු සටහන",appSubtitle:"සැමට බැලිය හැක • සංස්කරණයට මුරපදය අවශ්‍යයි",viewMode:"බැලීමේ ආකාරය",adminMode:"සංස්කරණ ආකාරය",login:"සංස්කරණ පිවිසුම",logout:"ඉවත් වන්න",totalStaff:"මුළු සේවකයින්",takenDays:"ගත් වැඩ දින",upcomingDays:"ඉදිරි වැඩ දින",onLeaveToday:"අද නිවාඩු",dashboard:"මුල් පිටුව",yearChart:"වාර්ෂික සටහන",allLeaves:"සියලු නිවාඩු",takenTab:"ගත් නිවාඩු",upcomingTab:"ඉදිරියේදී",team:"කණ්ඩායම",lockNote:"සැමට බැලිය හැක. එකතු කිරීමට / සංස්කරණයට / මැකීමට “සංස්කරණ පිවිසුම” ඔබා මුරපදය දෙන්න.",addLeave:"නිවාඩුවක් දමන්න",addStaff:"සේවකයෙක් දමන්න",print:"මුද්‍රණය",changePass:"මුරපදය",reset:"නැවත සකසන්න",nextLeaves:"ඊළඟ අනුමත නිවාඩු",daysPerPerson:"එක් අයෙකුට වැඩ දින",recentLeaves:"අලුතින් එකතු කළ",year:"වර්ෂය",chartHint:"ඉලක්කම් = එම මාසයේ අනුමත වැඩ දින (ඉරිදා සහ රජයේ නිවාඩු අයින්). නමක් ක්ලික් කළොත් එම අයගේ නිවාඩු පෙරේ.",searchPh:"🔍 නම / හේතුව සොයන්න...",thName:"නම",thFrom:"සිට",thTo:"දක්වා",thDays:"දින",thType:"වර්ගය",thReason:"හේතුව",thStatus:"තත්ත්වය",thAction:"ක්‍රියාව",takenHint:"තෝරාගත් වර්ෂය තුළ (අද දක්වා) ගත් අනුමත වැඩ දින.",upHint:"අදට පසු අනුමත අනාගත වැඩ දින, ළඟම දිනය පළමුව.",teamHint:"අයෙකුගේ නිවාඩු බැලීමට නම පත ක්ලික් කරන්න.",footer1:"නිවාඩු සටහන • සැමට බැලිය හැක, සංස්කරණයට මුරපදය අවශ්‍යයි",footer2:"දත්ත මෙම බ්‍රවුසරයේ සුරකී. බ්‍රවුසර් දත්ත මැකීමට පෙර Export JSON මගින් උපස්ථයක් තබාගන්න.",loginTitle:"සංස්කරණ පිවිසුම",password:"මුරපදය",passPh:"සංස්කරණ මුරපදය දෙන්න",defaultPassHint:"මුල් logins: admin/leave2026, Entry/entry2026, Zameer/zameer2026, Jamil/jamil2026 — පළමු පිවිසුමෙන් පසු වෙනස් කරන්න.",cancel:"අවලංගු",loginBtn:"පිවිසෙන්න",reasonPh:"උදා. පවුලේ ගමන / වෛද්‍ය",save:"සුරකින්න",currentPass:"වත්මන් මුරපදය",newPass:"නව මුරපදය",all:"සියල්ල",noData:"වාර්තා හමු නොවීය.",days:"දින",day:"දිනය",inDays:"දින {n} කින්",tomorrow:"හෙට",total:"මුළු",taken:"ගත්තේ",upcoming:"ඉදිරි",pending:"අපේක්ෂිත",deleteConfirm:"මෙම නිවාඩු වාර්තාව මකන්නද?",deleteStaff:"මෙම සේවකයා සහ ඔහුගේ/ඇයගේ සියලු නිවාඩු මකන්නද?",wrongPass:"❌ මුරපදය වැරදියි",loginOk:"✅ ආයුබෝවන්! සංස්කරණ ආකාරය ON",logoutOk:"ඉවත් වුණා. බැලීමේ ආකාරය.",saved:"✅ සුරකින ලදී",deleted:"🗑️ මකන ලදී",staffAdded:"✅ සේවකයා එකතු කළා",staffDeleted:"🗑️ සේවකයා මකන ලදී",passChanged:"✅ මුරපදය වෙනස් කළා",resetDone:"↩️ ආදර්ශ දත්ත යළි සකසන ලදී",importOk:"✅ සාර්ථකව ඇතුළු කළා",importFail:"❌ ගොනුව වැරදියි",needLogin:"🔐 පළමුව පිවිසෙන්න",editLeave:"නිවාඩුව සංස්කරණය",addLeaveTitle:"නිවාඩුවක් දමන්න",monthCal:"මාසික කැලැන්ඩරය",thisMonth:"මේ මාසය",lgLeave:"නිවාඩු (අනුමත)",lgHol:"ඉරිදා / රජයේ නිවාඩු",sunday:"ඉරිදා",holForAll:"සැමටම නිවාඩු",lgBoth:"නිවාඩු + රජයේ නිවාඩු",lgPend:"අපේක්ෂිත නිවාඩු",lgToday:"අද",govHol:"රජයේ නිවාඩු දිනය",onLeaveN:"{n} දෙනෙක් නිවාඩු",noLeaveDay:"මෙදින නිවාඩු නැත",addHoliday:"නිවාඩු දිනයක් දමන්න",holDate:"දිනය",holNameEn:"නම (ඉංග්‍රීසි)",holNameSi:"නම (සිංහල)",holNameTa:"නම (දෙමළ)",holAdded:"✅ නිවාඩු දිනය එකතු කළා",holDeleted:"🗑️ නිවාඩු දිනය ඉවත් කළා",slHolNote:"2026 ශ්‍රී ලංකා රජයේ නිවාඩු ඇතුළත් කර ඇත (පෝය, උත්සව හා විශේෂ දින). Admin ට තවත් දාන්න පුළුවන්",wdBreak:"📅 දින {cal} − නිවාඩු දින {off} = වැඩ දින {wd}",wdZero:"⚠️ තෝරාගත් සියලු දින ඉරිදා/නිවාඩුයි (වැඩ දින 0)",reload:"නැවත ගන්න",syncOk:"✅ සමමුහුර්තයි",syncDirty:"🟠 නොගැලපේ — data.json Export කරන්න",jsonLive:"📦 GitHub දත්ත",jsonLocal:"📦 Local දත්ත",jsonFail:"⚠️ අලුත් data.json ගන්න බැරිවුණා — සුරකින ලද දත්ත පෙන්වනවා",exportedJson:"⬆️ data.json බාගත කළා — GitHub එකට upload කරන්න",confirmReload:"සුරැකුම් නොකළ වෙනස්කම් අතහැර GitHub වෙතින් නැවත ගන්නද?",fbTitle:"Firebase Live Sync",fbStatus:"තත්ත්වය",fbApiKey:"API Key",fbAuthDomain:"Auth Domain",fbDbUrl:"Database URL",fbProjectId:"Project ID",fbSecret:"Write secret (optional)",fbTest:"Test",fbDownload:"firebase-config.js බාගන්න",fbPushNow:"Push now",fbUseDevice:"මෙම device එකේ Firebase පාවිච්චි කරන්න",fbHelp:"Firebase Console → Realtime Database → Create → Test mode → config මෙතන paste → Test → Download → GitHub ට upload. ඉන්පසු Admin edit කළ ගමන් හැමෝටම live update!",fbNoSdk:"⚠️ Firebase library load වුණේ නැහැ (internet ඕනේ)",fbTestOk:"✅ සම්බන්ධයි! Live data හමුණා",fbTestEmpty:"✅ සම්බන්ධයි! Database හිස් — Push now ඔබන්න",fbTestFail:"❌ සම්බන්ධ වෙන්න බැහැ — config & rules බලන්න",fbDownloaded:"⬇️ firebase-config.js බාගත කළා — GitHub එකට upload කරන්න",fbPushed:"⬆️ Firebase වෙත Push කළා",fbLive:"🔥 Live update එකක් ආවා",fbConflict:"⚠️ අලුත් live data ආවා, නමුත් ඔබේ unsynced වෙනස්කම් තියෙනවා — ඔබේ ඒවා තියාගත්තා. Push කළොත් overwrite වෙනවා.",gTitle:"Google Drive Sync",gUrl:"Apps Script Web App URL",gSecret:"Write secret",gPoll:"Auto-refresh තත්පර (10–300)",gUseDevice:"මෙම device එකේ Google sync පාවිච්චි කරන්න",gHelp:"Google Drive → New → Apps Script → Code.gs paste → Deploy → Web app (Anyone) → URL + secret මෙතන paste → Test → Download → GitHub ට upload. Data auto-refresh වෙනවා + Admin edits Drive ට auto-save!",gEmpty:"✅ සම්බන්ධයි! Drive file හිස් — Push now ඔබන්න",gDownloaded:"⬇️ google-config.js බාගත කළා — GitHub එකට upload කරන්න",gPushFail:"❌ Google ට save වුණේ නැහැ — URL/secret/deployment බලන්න",gDownloadBtn:"google-config.js බාගන්න",schedTab:"උපලේඛනය",addSched:"උපලේඛනයක් දමන්න",editSched:"උපලේඛනය සංස්කරණය",thDate:"දිනය",thShift:"මුරය",thNote:"සටහන",schedSearchPh:"🔍 නම / සටහන සොයන්න...",schedNotePh:"උදා. කවුන්ටර් රාජකාරිය",rangeHint:"දින {n} → ඇතුළත් කිරීම් {n} (ඇති දින update වෙනවා)",schedForDay:"වැඩ උපලේඛනය",onDutyToday:"අද රාජකාරියේ",lgSched:"වැඩ උපලේඛනය",schedDelete:"මෙම උපලේඛන ඇතුළත් කිරීම මකන්නද?",noPerm:"⛔ ඔබේ භූමිකාවට අවසර නැහැ",role_admin:"පරිපාලක",role_entry:"දත්ත ඇතුළත් කරන්නා",role_scheduler:"උපලේඛක",loginUser:"පරිශීලක",usersTitle:"පරිශීලකයින්",jsonEmpty:"⚠️ server එකේ data.json හිස් — දැනට තියෙන data තියාගත්තා"},
+ta:{appTitle:"விடுப்பு அட்டவணை",appSubtitle:"அனைவரும் பார்க்கலாம் • திருத்த password தேவை",viewMode:"பார்வை முறை",adminMode:"திருத்து முறை",login:"திருத்து நுழைவு",logout:"வெளியேறு",totalStaff:"மொத்த ஊழியர்கள்",takenDays:"எடுத்த வேலை நாட்கள்",upcomingDays:"வரவிருக்கும் வேலை நாட்கள்",onLeaveToday:"இன்று விடுப்பில்",dashboard:"முகப்பு",yearChart:"ஆண்டு அட்டவணை",allLeaves:"அனைத்து விடுப்புகள்",takenTab:"எடுத்தவை",upcomingTab:"வரவிருக்கும்",team:"குழு",lockNote:"அனைவரும் பார்க்கலாம். சேர்க்க / திருத்த / நீக்க “திருத்து நுழைவு” அழுத்தி password கொடுக்கவும்.",addLeave:"விடுப்பு சேர்",addStaff:"ஊழியர் சேர்",print:"அச்சிடு",changePass:"Password",reset:"மீட்டமை",nextLeaves:"அடுத்த அங்கீகரித்த விடுப்புகள்",daysPerPerson:"ஒருவருக்கு வேலை நாட்கள்",recentLeaves:"சமீபத்தில் சேர்த்தவை",year:"ஆண்டு",chartHint:"எண்கள் = அந்த மாதத்தில் அங்கீகரித்த வேலை நாட்கள் (ஞாயிறு & அரசு விடுமுறை நீங்கலாக). பெயரை கிளிக் செய்தால் வடிகட்டலாம்.",searchPh:"🔍 பெயர் / காரணம் தேடுக...",thName:"பெயர்",thFrom:"முதல்",thTo:"வரை",thDays:"நாட்கள்",thType:"வகை",thReason:"காரணம்",thStatus:"நிலை",thAction:"செயல்",takenHint:"தேர்ந்த ஆண்டில் (இன்று வரை) எடுத்த அங்கீகரித்த வேலை நாட்கள்.",upHint:"இன்றுக்குப் பின் அங்கீகரித்த வரவிருக்கும் வேலை நாட்கள், அருகிலுள்ள தேதி முதலில்.",teamHint:"ஒருவரின் விடுப்பைப் பார்க்க பெயர் அட்டையை கிளிக் செய்க.",footer1:"விடுப்பு அட்டவணை • அனைவரும் பார்க்கலாம், திருத்த password தேவை",footer2:"தரவு இந்த உலாவியில் சேமிக்கப்படும். உலாவி தரவை அழிக்கும் முன் Export JSON மூலம் காப்பு எடுக்கவும்.",loginTitle:"திருத்து நுழைவு",password:"Password",passPh:"திருத்து password கொடுக்கவும்",defaultPassHint:"ஆரம்ப logins: admin/leave2026, Entry/entry2026, Zameer/zameer2026, Jamil/jamil2026 — முதல் நுழைவுக்குப் பின் மாற்றவும்.",cancel:"ரத்து",loginBtn:"நுழைக",reasonPh:"எ.கா. குடும்ப பயணம் / மருத்துவம்",save:"சேமி",currentPass:"தற்போதைய password",newPass:"புதிய password",all:"அனைத்தும்",noData:"பதிவுகள் இல்லை.",days:"நாட்கள்",day:"நாள்",inDays:"{n} நாட்களில்",tomorrow:"நாளை",total:"மொத்தம்",taken:"எடுத்தது",upcoming:"வரவிருக்கும்",pending:"நிலுவை",deleteConfirm:"இந்த விடுப்பு பதிவை நீக்கவா?",deleteStaff:"இந்த ஊழியரையும் அவரது அனைத்து விடுப்புகளையும் நீக்கவா?",wrongPass:"❌ தவறான password",loginOk:"✅ வணக்கம்! திருத்து முறை ON",logoutOk:"வெளியேறினீர்கள். பார்வை முறை.",saved:"✅ சேமிக்கப்பட்டது",deleted:"🗑️ நீக்கப்பட்டது",staffAdded:"✅ ஊழியர் சேர்க்கப்பட்டார்",staffDeleted:"🗑️ ஊழியர் நீக்கப்பட்டார்",passChanged:"✅ Password மாற்றப்பட்டது",resetDone:"↩️ மாதிரி தரவு மீட்கப்பட்டது",importOk:"✅ வெற்றிகரமாக இறக்குமதி",importFail:"❌ தவறான கோப்பு",needLogin:"🔐 முதலில் நுழையவும்",editLeave:"விடுப்பைத் திருத்து",addLeaveTitle:"விடுப்பு சேர்",monthCal:"மாத நாட்காட்டி",thisMonth:"இந்த மாதம்",lgLeave:"விடுப்பில் (அங்கீகரித்த)",lgHol:"ஞாயிறு / அரசு விடுமுறை",sunday:"ஞாயிறு",holForAll:"அனைவருக்கும் விடுமுறை",lgBoth:"விடுப்பு + அரசு விடுமுறை",lgPend:"நிலுவை விடுப்பு",lgToday:"இன்று",govHol:"அரசு விடுமுறை தினம்",onLeaveN:"{n} பேர் விடுப்பில்",noLeaveDay:"இந்நாளில் விடுப்பு இல்லை",addHoliday:"விடுமுறை சேர்",holDate:"தேதி",holNameEn:"பெயர் (ஆங்கிலம்)",holNameSi:"பெயர் (சிங்களம்)",holNameTa:"பெயர் (தமிழ்)",holAdded:"✅ விடுமுறை சேர்க்கப்பட்டது",holDeleted:"🗑️ விடுமுறை நீக்கப்பட்டது",slHolNote:"2026 இலங்கை அரசு விடுமுறைகள் சேர்க்கப்பட்டுள்ளன (போயா, பண்டிகை & சிறப்பு நாட்கள்). Admin மேலும் சேர்க்கலாம்",wdBreak:"📅 {cal} நாட்கள் − விடுமுறை {off} = வேலை நாட்கள் {wd}",wdZero:"⚠️ தேர்ந்த அனைத்தும் ஞாயிறு/விடுமுறை (வேலை நாள் 0)",reload:"மீண்டும் ஏற்று",syncOk:"✅ ஒத்திசைவு",syncDirty:"🟠 ஒத்திசைவில்லை — data.json Export செய்க",jsonLive:"📦 GitHub தரவு",jsonLocal:"📦 Local தரவு",jsonFail:"⚠️ புதிய data.json ஏற்ற முடியவில்லை — சேமித்த தரவு காட்டப்படுகிறது",exportedJson:"⬆️ data.json பதிவிறக்கப்பட்டது — GitHub இல் upload செய்க",confirmReload:"சேமிக்காத மாற்றங்களை நீக்கி GitHub இலிருந்து மீண்டும் ஏற்றவா?",fbTitle:"Firebase Live Sync",fbStatus:"நிலை",fbApiKey:"API Key",fbAuthDomain:"Auth Domain",fbDbUrl:"Database URL",fbProjectId:"Project ID",fbSecret:"Write secret (optional)",fbTest:"Test",fbDownload:"firebase-config.js பதிவிறக்கு",fbPushNow:"Push now",fbUseDevice:"இந்த device இல் Firebase பயன்படுத்து",fbHelp:"Firebase Console → Realtime Database → Create → Test mode → config இங்கே paste → Test → Download → GitHub இல் upload. பின் Admin திருத்தியதும் அனைவருக்கும் live update!",fbNoSdk:"⚠️ Firebase library ஏற்றப்படவில்லை (internet தேவை)",fbTestOk:"✅ இணைப்பு! Live தரவு கிடைத்தது",fbTestEmpty:"✅ இணைப்பு! Database காலி — Push now அழுத்தவும்",fbTestFail:"❌ இணைக்க முடியவில்லை — config & rules பார்க்கவும்",fbDownloaded:"⬇️ firebase-config.js பதிவிறக்கப்பட்டது — GitHub இல் upload செய்க",fbPushed:"⬆️ Firebase க்கு Push செய்யப்பட்டது",fbLive:"🔥 Live update வந்தது",fbConflict:"⚠️ புதிய live தரவு வந்தது, ஆனால் உங்கள் unsynced மாற்றங்கள் உள்ளன — உங்களுடையது வைக்கப்பட்டது. Push செய்தால் மேலெழுதப்படும்.",gTitle:"Google Drive Sync",gUrl:"Apps Script Web App URL",gSecret:"Write secret",gPoll:"Auto-refresh வினாடிகள் (10–300)",gUseDevice:"இந்த device இல் Google sync பயன்படுத்து",gHelp:"Google Drive → New → Apps Script → Code.gs paste → Deploy → Web app (Anyone) → URL + secret இங்கே paste → Test → Download → GitHub இல் upload. Data auto-refresh + Admin edits Drive இல் auto-save!",gEmpty:"✅ இணைப்பு! Drive கோப்பு காலி — Push now அழுத்தவும்",gDownloaded:"⬇️ google-config.js பதிவிறக்கப்பட்டது — GitHub இல் upload செய்க",gPushFail:"❌ Google இல் save ஆகவில்லை — URL/secret/deployment பார்க்கவும்",gDownloadBtn:"google-config.js பதிவிறக்கு",schedTab:"அட்டவணை",addSched:"அட்டவணை சேர்",editSched:"அட்டவணை திருத்து",thDate:"தேதி",thShift:"முறை",thNote:"குறிப்பு",schedSearchPh:"🔍 பெயர் / குறிப்பு தேடுக...",schedNotePh:"எ.கா. கவுண்டர் பணி",rangeHint:"{n} நாட்கள் → {n} பதிவுகள் (உள்ள தேதிகள் update)",schedForDay:"பணி அட்டவணை",onDutyToday:"இன்று பணியில்",lgSched:"பணி அட்டவணை",schedDelete:"இந்த அட்டவணை பதிவை நீக்கவா?",noPerm:"⛔ உங்கள் பாத்திரத்திற்கு அனுமதி இல்லை",role_admin:"நிர்வாகி",role_entry:"தரவு உள்ளீடு",role_scheduler:"அட்டவணையாளர்",loginUser:"பயனர்",usersTitle:"பயனர்கள்",jsonEmpty:"⚠️ server இல் data.json காலி — தற்போதைய தரவு வைக்கப்பட்டது"}
+};
+const TYPES = {annual:{en:"Annual",si:"වාර්ෂික",ta:"ஆண்டு"},sick:{en:"Sick",si:"අසනීප",ta:"நோய்"},casual:{en:"Casual",si:"අනියම්",ta:"சாதாரண"},unpaid:{en:"Unpaid",si:"වැටුප් රහිත",ta:"சம்பளமில்லா"},family:{en:"Family / Other",si:"පවුල් / වෙනත්",ta:"குடும்ப / மற்ற"}};
+const STATUS = {approved:{en:"Approved",si:"අනුමත",ta:"அங்கீகரித்தது"},pending:{en:"Pending",si:"අපේක්ෂිත",ta:"நிலுவையில்"},rejected:{en:"Rejected",si:"ප්‍රතික්ෂේප",ta:"நிராகரித்தது"}};
+const SHIFTS={morning:{en:"Morning",si:"උදෑසන",ta:"காலை"},evening:{en:"Evening",si:"සවස",ta:"மாலை"},night:{en:"Night",si:"රාත්‍රී",ta:"இரவு"},full:{en:"Full Day",si:"මුළු දවස",ta:"முழு நாள்"},off:{en:"Day Off",si:"නිවාඩු දිනය",ta:"விடுமுறை நாள்"},custom:{en:"Custom",si:"වෙනත්",ta:"மற்றது"}};
+const MONTHS = {
+en:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+si:["ජන","පෙබ","මාර්","අප්‍රේ","මැයි","ජුනි","ජුලි","අගෝ","සැප්","ඔක්","නොවැ","දෙසැ"],
+ta:["ஜன","பிப்","மார்","ஏப்","மே","ஜூன்","ஜூலை","ஆக","செப்","அக்","நவ","டிச"]};
+const MONTHS_FULL = {
+en:["January","February","March","April","May","June","July","August","September","October","November","December"],
+si:["ජනවාරි","පෙබරවාරි","මාර්තු","අප්‍රේල්","මැයි","ජුනි","ජුලි","අගෝස්තු","සැප්තැම්බර්","ඔක්තෝබර්","නොවැම්බර්","දෙසැම්බර්"],
+ta:["ஜனவரி","பிப்ரவரி","மார்ச்","ஏப்ரல்","மே","ஜூன்","ஜூலை","ஆகஸ்ட்","செப்டம்பர்","அக்டோபர்","நவம்பர்","டிசம்பர்"]};
+
+/* ============ DATA ============ */
+const DEFAULT_STAFF = ["Zameer","Jamil","Amjet","Akram","Manoj","Sajeewan","Praweena","Darshan","Fazha","Anuradha"];
+const SEED = [
+{id:"L01",name:"Zameer",from:"2026-01-05",to:"2026-01-06",type:"annual",reason:"Family trip",status:"approved"},
+{id:"L02",name:"Zameer",from:"2026-04-13",to:"2026-04-14",type:"annual",reason:"Avurudu",status:"approved"},
+{id:"L03",name:"Zameer",from:"2026-07-20",to:"2026-07-20",type:"sick",reason:"Fever",status:"approved"},
+{id:"L04",name:"Zameer",from:"2026-10-20",to:"2026-10-22",type:"annual",reason:"Family wedding",status:"approved"},
+{id:"L05",name:"Jamil",from:"2026-02-10",to:"2026-02-10",type:"sick",reason:"Medical",status:"approved"},
+{id:"L06",name:"Jamil",from:"2026-05-15",to:"2026-05-15",type:"casual",reason:"Personal work",status:"approved"},
+{id:"L07",name:"Jamil",from:"2026-09-10",to:"2026-09-12",type:"sick",reason:"Flu",status:"approved"},
+{id:"L08",name:"Jamil",from:"2026-11-05",to:"2026-11-05",type:"annual",reason:"Family event",status:"approved"},
+{id:"L09",name:"Amjet",from:"2026-03-02",to:"2026-03-03",type:"annual",reason:"Trip",status:"approved"},
+{id:"L10",name:"Amjet",from:"2026-06-18",to:"2026-06-18",type:"casual",reason:"Personal",status:"approved"},
+{id:"L11",name:"Amjet",from:"2026-09-11",to:"2026-09-11",type:"annual",reason:"Private matter",status:"approved"},
+{id:"L12",name:"Amjet",from:"2026-12-15",to:"2026-12-16",type:"annual",reason:"Year-end trip",status:"approved"},
+{id:"L13",name:"Akram",from:"2026-01-20",to:"2026-01-20",type:"casual",reason:"Personal",status:"approved"},
+{id:"L14",name:"Akram",from:"2026-08-03",to:"2026-08-04",type:"sick",reason:"Medical",status:"approved"},
+{id:"L15",name:"Akram",from:"2026-10-05",to:"2026-10-06",type:"annual",reason:"Family visit",status:"approved"},
+{id:"L16",name:"Manoj",from:"2026-04-02",to:"2026-04-02",type:"annual",reason:"Personal",status:"approved"},
+{id:"L17",name:"Manoj",from:"2026-07-10",to:"2026-07-10",type:"sick",reason:"Fever",status:"approved"},
+{id:"L18",name:"Manoj",from:"2026-09-25",to:"2026-09-26",type:"annual",reason:"Wedding",status:"approved"},
+{id:"L19",name:"Sajeewan",from:"2026-02-14",to:"2026-02-14",type:"annual",reason:"Personal",status:"approved"},
+{id:"L20",name:"Sajeewan",from:"2026-05-20",to:"2026-05-21",type:"sick",reason:"Medical",status:"approved"},
+{id:"L21",name:"Sajeewan",from:"2026-11-10",to:"2026-11-12",type:"annual",reason:"Trip",status:"approved"},
+{id:"L22",name:"Praweena",from:"2026-03-15",to:"2026-03-15",type:"sick",reason:"Medical",status:"approved"},
+{id:"L23",name:"Praweena",from:"2026-06-05",to:"2026-06-06",type:"annual",reason:"Family trip",status:"approved"},
+{id:"L24",name:"Praweena",from:"2026-09-08",to:"2026-09-08",type:"casual",reason:"Personal",status:"approved"},
+{id:"L25",name:"Praweena",from:"2026-10-12",to:"2026-10-12",type:"annual",reason:"Event",status:"approved"},
+{id:"L26",name:"Darshan",from:"2026-01-12",to:"2026-01-12",type:"annual",reason:"Personal",status:"approved"},
+{id:"L27",name:"Darshan",from:"2026-07-25",to:"2026-07-25",type:"casual",reason:"Personal work",status:"approved"},
+{id:"L28",name:"Darshan",from:"2026-12-01",to:"2026-12-03",type:"annual",reason:"Year-end holiday",status:"approved"},
+{id:"L29",name:"Fazha",from:"2026-04-25",to:"2026-04-25",type:"sick",reason:"Medical",status:"approved"},
+{id:"L30",name:"Fazha",from:"2026-08-20",to:"2026-08-21",type:"annual",reason:"Family visit",status:"approved"},
+{id:"L31",name:"Fazha",from:"2026-09-30",to:"2026-10-01",type:"annual",reason:"Trip",status:"pending"},
+{id:"L32",name:"Fazha",from:"2026-11-20",to:"2026-11-20",type:"annual",reason:"Event",status:"approved"},
+{id:"L33",name:"Anuradha",from:"2026-02-28",to:"2026-02-28",type:"casual",reason:"Personal",status:"approved"},
+{id:"L34",name:"Anuradha",from:"2026-06-30",to:"2026-07-01",type:"annual",reason:"Family trip",status:"approved"},
+{id:"L35",name:"Anuradha",from:"2026-10-30",to:"2026-10-30",type:"casual",reason:"Personal work",status:"pending"}
+];
+SEED.forEach(s=>{s.days=diffDays(s.from,s.to);s.created=Date.now()});
+
+function safeParse(s,f){try{const v=JSON.parse(s||"null");return v==null?f:v}catch(e){return f}}
+function dbgErr(m){try{(window.__bootErrs=window.__bootErrs||[]).push(m);var d=document.getElementById("bootErr");if(d){d.style.display="block";var t="\u26a0\ufe0f "+window.__bootErrs.join(" | ");d.textContent=t.length>600?t.slice(0,600)+"\u2026":t}}catch(_){}}
+let lang = localStorage.getItem("lc_lang")||"en";
+if(lang!=="en"&&lang!=="si"&&lang!=="ta")lang="en";
+let staff = safeParse(localStorage.getItem("lc_staff"),[...DEFAULT_STAFF]);
+let leaves = safeParse(localStorage.getItem("lc_leaves"),JSON.parse(JSON.stringify(SEED)));
+let isAdmin=false;try{isAdmin=sessionStorage.getItem("lc_admin")==="1"}catch(e){console.error("auth",e)}
+const CUR_YEAR = new Date().getFullYear();
+const WD={
+en:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
+si:["සඳු","අඟ","බදා","බ්‍රහ","සිකු","සෙන","ඉරි"],
+ta:["திங்","செவ்","புத","வியா","வெள்","சனி","ஞாயி"]};
+const SL_HOLIDAYS_2026=[
+{d:"2026-01-03",en:"Duruthu Full Moon Poya Day",si:"දුරුතු පුර පසළොස්වක පෝය දිනය",ta:"துருத்து முழுநிலவு போயா தினம்"},
+{d:"2026-01-15",en:"Tamil Thai Pongal Day",si:"දමිළ තෛපොංගල් දිනය",ta:"தமிழ் தைப்பொங்கல் தினம்"},
+{d:"2026-02-01",en:"Navam Full Moon Poya Day",si:"නවම් පුර පසළොස්වක පෝය දිනය",ta:"நவம் முழுநிலவு போயா தினம்"},
+{d:"2026-02-04",en:"Independence Day",si:"නිදහස් දිනය",ta:"சுதந்திர தினம்"},
+{d:"2026-02-15",en:"Maha Sivarathri Day",si:"මහා ශිවරාත්‍රී දිනය",ta:"மகா சிவராத்திரி தினம்"},
+{d:"2026-03-02",en:"Medin Full Moon Poya Day",si:"මැදින් පුර පසළොස්වක පෝය දිනය",ta:"மெதின் முழுநிலவு போயா தினம்"},
+{d:"2026-03-21",en:"Id-Ul-Fitr (Ramazan Festival Day)",si:"ඊදුල්-ෆිත්ර් (රමසාන් උත්සව දිනය)",ta:"ஈதுல்-பித்ர் (ரம்ஸான் பண்டிகை தினம்)"},
+{d:"2026-04-01",en:"Bak Full Moon Poya Day",si:"බක් පුර පසළොස්වක පෝය දිනය",ta:"பக் முழுநிலவு போயா தினம்"},
+{d:"2026-04-03",en:"Good Friday",si:"මහ සිකුරාදා",ta:"புனித வெள்ளி"},
+{d:"2026-04-13",en:"Day Prior to Sinhala & Tamil New Year Day",si:"සිංහල හා දමිළ අලුත් අවුරුද්දට පෙර දිනය",ta:"சிங்கள தமிழ் புத்தாண்டுக்கு முந்தைய தினம்"},
+{d:"2026-04-14",en:"Sinhala & Tamil New Year Day",si:"සිංහල හා දමිළ අලුත් අවුරුදු දිනය",ta:"சிங்கள தமிழ் புத்தாண்டு தினம்"},
+{d:"2026-05-01",en:"Vesak Full Moon Poya Day",si:"වෙසක් පුර පසළොස්වක පෝය දිනය",ta:"வெசாக் முழுநிலவு போயா தினம்"},
+{d:"2026-05-01",en:"May Day (International Workers' Day)",si:"මැයි දිනය (ජාත්‍යන්තර කම්කරු දිනය)",ta:"மே தினம் (சர்வதேச தொழிலாளர் தினம்)"},
+{d:"2026-05-02",en:"Day Following Vesak Full Moon Poya Day",si:"වෙසක් පෝයට පසු දිනය",ta:"வெசாக் போயாவுக்கு அடுத்த தினம்"},
+{d:"2026-05-28",en:"Id-Ul-Alha (Hadji Festival Day)",si:"ඊදුල්-අල්හා (හජ්ජි උත්සව දිනය)",ta:"ஈதுல்-அல்ஹா (ஹஜ் பண்டிகை தினம்)"},
+{d:"2026-05-30",en:"Adhi Poson Full Moon Poya Day",si:"අධි පොසොන් පුර පසළොස්වක පෝය දිනය",ta:"அதி பொசொன் முழுநிலவு போயா தினம்"},
+{d:"2026-06-29",en:"Poson Full Moon Poya Day",si:"පොසොන් පුර පසළොස්වක පෝය දිනය",ta:"பொசொன் முழுநிலவு போயா தினம்"},
+{d:"2026-07-29",en:"Esala Full Moon Poya Day",si:"ඇසළ පුර පසළොස්වක පෝය දිනය",ta:"எசல முழுநிலவு போயா தினம்"},
+{d:"2026-08-26",en:"Milad-Un-Nabi (Holy Prophet's Birthday)",si:"මිලාදුන්-නබි (නබිතුමාගේ උපන් දිනය)",ta:"மிலாதுன்-நபி (நபிகள் பிறந்த தினம்)"},
+{d:"2026-08-27",en:"Nikini Full Moon Poya Day",si:"නිකිණි පුර පසළොස්වක පෝය දිනය",ta:"நிக்கினி முழுநிலவு போயா தினம்"},
+{d:"2026-09-26",en:"Binara Full Moon Poya Day",si:"බිනර පුර පසළොස්වක පෝය දිනය",ta:"பினர முழுநிலவு போயா தினம்"},
+{d:"2026-10-25",en:"Vap Full Moon Poya Day",si:"වප් පුර පසළොස්වක පෝය දිනය",ta:"வப் முழுநிலவு போயா தினம்"},
+{d:"2026-11-08",en:"Deepavali Festival Day",si:"දීපාවලි උත්සව දිනය",ta:"தீபாவளி பண்டிகை தினம்"},
+{d:"2026-11-24",en:"Ill Full Moon Poya Day",si:"ඉල් පුර පසළොස්වක පෝය දිනය",ta:"இல் முழுநிலவு போயா தினம்"},
+{d:"2026-12-23",en:"Unduvap Full Moon Poya Day",si:"උඳුවප් පුර පසළොස්වක පෝය දිනය",ta:"உந்துவப் முழுநிலவு போயா தினம்"},
+{d:"2026-12-25",en:"Christmas Day",si:"නත්තල් දිනය",ta:"நத்தார் தினம்"}
+];
+SL_HOLIDAYS_2026.forEach((h,i)=>h.id="Hseed"+i);
+let holidays=safeParse(localStorage.getItem("lc_hol_v1"),JSON.parse(JSON.stringify(SL_HOLIDAYS_2026)));
+const SEED_SCHED=[
+{id:"S01",name:"Zameer",date:"2026-09-14",shift:"morning",note:""},
+{id:"S02",name:"Jamil",date:"2026-09-14",shift:"evening",note:""},
+{id:"S03",name:"Amjet",date:"2026-09-15",shift:"morning",note:""},
+{id:"S04",name:"Akram",date:"2026-09-15",shift:"evening",note:""},
+{id:"S05",name:"Manoj",date:"2026-09-16",shift:"full",note:""},
+{id:"S06",name:"Sajeewan",date:"2026-09-16",shift:"morning",note:""},
+{id:"S07",name:"Praweena",date:"2026-09-17",shift:"morning",note:""},
+{id:"S08",name:"Darshan",date:"2026-09-17",shift:"evening",note:""},
+{id:"S09",name:"Fazha",date:"2026-09-18",shift:"morning",note:""},
+{id:"S10",name:"Anuradha",date:"2026-09-18",shift:"evening",note:""},
+{id:"S11",name:"Zameer",date:"2026-09-19",shift:"full",note:"Saturday duty"},
+{id:"S12",name:"Jamil",date:"2026-09-19",shift:"full",note:"Saturday duty"}
+];
+SEED_SCHED.forEach(s=>s.created=Date.now());
+let schedules=safeParse(localStorage.getItem("lc_sched_v1"),JSON.parse(JSON.stringify(SEED_SCHED)));
+let calY=new Date().getFullYear(),calM=new Date().getMonth(),calSel=todayStr();
+try{const _c=normalizeData({staff:staff,leaves:leaves,holidays:holidays,schedules:schedules});staff=_c.staff;leaves=_c.leaves;holidays=_c.holidays;schedules=_c.schedules;saveAll()}catch(e){console.error("boot-clean",e);dbgErr("boot-clean: "+(e&&e.message||e))}
+function pad2(n){return String(n).padStart(2,"0")}
+function dstr(y,m,d){return y+"-"+pad2(m+1)+"-"+pad2(d)}
+function leavesOn(ds){return leaves.filter(l=>l.status==="approved"&&l.from<=ds&&(l.to||l.from)>=ds)}
+function pendingOn(ds){return leaves.filter(l=>l.status==="pending"&&l.from<=ds&&(l.to||l.from)>=ds)}
+function holsOn(ds){return holidays.filter(h=>h.d===ds)}
+function holName(h){return h[lang]||h.en||""}
+
+function getPass(){return localStorage.getItem("lc_pass")||"leave2026"}
+let users=safeParse(localStorage.getItem("lc_users_v1"),null);
+if(!users||!users.admin){users={admin:{pass:localStorage.getItem("lc_pass")||"leave2026",role:"admin"},Entry:{pass:"entry2026",role:"entry"},Zameer:{pass:"zameer2026",role:"scheduler"},Jamil:{pass:"jamil2026",role:"scheduler"}};localStorage.setItem("lc_users_v1",JSON.stringify(users))}
+let currentUser=null;
+try{const su=sessionStorage.getItem("lc_user");if(su&&users[su])currentUser={name:su,role:users[su].role};else if(sessionStorage.getItem("lc_admin")==="1"){currentUser={name:"admin",role:"admin"};try{sessionStorage.setItem("lc_user","admin")}catch(_){}}}catch(e){console.error("auth",e)}
+function saveUsers(){localStorage.setItem("lc_users_v1",JSON.stringify(users))}
+function refreshAuth(){isAdmin=!!(currentUser&&currentUser.role==="admin");document.body.classList.toggle("logged",!!currentUser);document.body.classList.toggle("role-admin",isAdmin);document.body.classList.toggle("role-entry",!!(currentUser&&currentUser.role==="entry"));document.body.classList.toggle("role-scheduler",!!(currentUser&&currentUser.role==="scheduler"));document.body.classList.toggle("admin",isAdmin)}
+function canLeave(){return!!(currentUser&&(currentUser.role==="admin"||currentUser.role==="entry"))}
+function canSched(){return!!currentUser}
+function canSchedDel(){return!!(currentUser&&(currentUser.role==="admin"||currentUser.role==="scheduler"))}
+function noPerm(){toast(t("noPerm"))}
+function requireLeave(fn){if(canLeave())fn();else{openLogin();toast(currentUser?t("noPerm"):t("needLogin"))}}
+function requireSched(fn){if(canSched())fn();else{openLogin();toast(t("needLogin"))}}
+function requireSchedDel(fn){if(canSchedDel())fn();else{openLogin();toast(currentUser?t("noPerm"):t("needLogin"))}}
+function saveAll(){localStorage.setItem("lc_staff",JSON.stringify(staff));localStorage.setItem("lc_leaves",JSON.stringify(leaves));localStorage.setItem("lc_hol_v1",JSON.stringify(holidays));localStorage.setItem("lc_sched_v1",JSON.stringify(schedules))}
+function t(k){return (I18N[lang]&&I18N[lang][k])||I18N.en[k]||k}
+function diffDays(a,b){const d1=new Date(a+"T00:00:00"),d2=new Date((b||a)+"T00:00:00");return Math.max(1,Math.round((d2-d1)/86400000)+1)}
+function workingDays(a,b){
+  const s=new Date(a+"T00:00:00"),e=new Date((b||a)+"T00:00:00");
+  if(!a||e<s)return 0;
+  let n=0;
+  for(let d=new Date(s);d<=e;d.setDate(d.getDate()+1)){
+    if(((d.getDay()+6)%7)===6)continue;
+    if(holsOn(d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate())).length)continue;
+    n++;
+  }
+  return n;
+}
+function effDays(l){if(l.manual!=null&&!isNaN(+l.manual))return +l.manual;return workingDays(l.from,l.to||l.from)}
+function wdaysInMonth(lv,year,mi){
+  const s=new Date(lv.from+"T00:00:00"),e=new Date((lv.to||lv.from)+"T00:00:00");
+  const mS=new Date(year,mi,1),mE=new Date(year,mi+1,0);
+  const a=s>mS?s:mS,b=e<mE?e:mE;
+  if(b<a)return 0;
+  let wd=0;
+  for(let d=new Date(a);d<=b;d.setDate(d.getDate()+1)){
+    if(((d.getDay()+6)%7)===6)continue;
+    if(holsOn(d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate())).length)continue;
+    wd++;
+  }
+  if(lv.manual==null||isNaN(+lv.manual))return wd;
+  const tot=workingDays(lv.from,lv.to||lv.from);
+  if(!tot)return 0;
+  return Math.round((+lv.manual)*wd/tot*2)/2;
+}
+function todayStr(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function fmt(d){if(!d)return"";const[y,m,dd]=d.split("-");return dd+"/"+m+"/"+y}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function colorFor(name){let h=0;for(const c of name)h=(h*31+c.charCodeAt(0))%360;return `hsl(${h},65%,48%)`}
+const AV = n=>`<div class="avatar" style="background:${colorFor(n)}">${esc(n.trim()[0]||"?").toUpperCase()}</div>`;
+
+/* ============ INIT ============ */
+document.querySelectorAll(".tab-btn").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tab-btn").forEach(x=>x.classList.remove("active"));document.querySelectorAll(".panel").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.getElementById("panel-"+b.dataset.tab).classList.add("active")});
+document.querySelectorAll(".lang-btn").forEach(b=>b.onclick=()=>{lang=b.dataset.lang;localStorage.setItem("lc_lang",lang);applyLang()});
+
+function applyLang(){
+  document.querySelectorAll("[data-i18n]").forEach(el=>{el.textContent=t(el.dataset.i18n)});
+  document.querySelectorAll("[data-i18n-ph]").forEach(el=>{el.placeholder=t(el.dataset.i18nPh)});
+  document.querySelectorAll(".lang-btn").forEach(b=>b.classList.toggle("active",b.dataset.lang===lang));
+  document.documentElement.lang = lang==="si"?"si":lang==="ta"?"ta":"en";
+  const d=new Date(), mi=d.getMonth();
+  document.getElementById("todayLabel").textContent = d.getDate()+" "+MONTHS_FULL[lang][mi]+" "+d.getFullYear();
+  document.getElementById("yearLabel").textContent = (lang==="si"?"වර්ෂය: ":lang==="ta"?"ஆண்டு: ":"Year: ")+CUR_YEAR;
+  document.querySelectorAll(".js-year").forEach(e=>e.textContent=CUR_YEAR);
+  document.getElementById("stYear1").textContent=CUR_YEAR;
+  try{buildFilters()}catch(e){console.error("filters",e);dbgErr("filters: "+(e&&e.message||e))}try{renderAll()}catch(e){console.error("render",e);dbgErr("render: "+(e&&e.message||e))}
+}
+function buildFilters(){
+  const years=[...new Set(leaves.filter(l=>l&&l.from).map(l=>l.from.slice(0,4)).concat([String(CUR_YEAR)]))].sort().reverse();
+  const cy=document.getElementById("chartYear"), ty=document.getElementById("takenYear");
+  cy.innerHTML=years.map(y=>`<option ${y==CUR_YEAR?"selected":""}>${y}</option>`).join("");
+  ty.innerHTML=years.map(y=>`<option ${y==CUR_YEAR?"selected":""}>${y}</option>`).join("");
+  document.getElementById("fName").innerHTML=`<option value="">👤 ${t("thName")}: ${t("all")}</option>`+staff.map(s=>`<option>${esc(s)}</option>`).join("");
+  document.getElementById("fMonth").innerHTML=`<option value="">📅 ${t("all")}</option>`+MONTHS[lang].map((m,i)=>`<option value="${i}">${m}</option>`).join("");
+  document.getElementById("fType").innerHTML=`<option value="">🏷️ ${t("thType")}: ${t("all")}</option>`+Object.keys(TYPES).map(k=>`<option value="${k}">${TYPES[k][lang]}</option>`).join("");
+  document.getElementById("fStatus").innerHTML=`<option value="">🚦 ${t("thStatus")}: ${t("all")}</option>`+Object.keys(STATUS).map(k=>`<option value="${k}">${STATUS[k][lang]}</option>`).join("");
+  document.getElementById("lvName").innerHTML=staff.map(s=>`<option>${esc(s)}</option>`).join("");
+  document.getElementById("lvType").innerHTML=Object.keys(TYPES).map(k=>`<option value="${k}">${TYPES[k][lang]}</option>`).join("");
+  document.getElementById("lvStatus").innerHTML=Object.keys(STATUS).map(k=>`<option value="${k}">${STATUS[k][lang]}</option>`).join("");
+  document.getElementById("sName").innerHTML=`<option value="">👤 ${t("thName")}: ${t("all")}</option>`+staff.map(s=>`<option>${esc(s)}</option>`).join("");
+  document.getElementById("sShift").innerHTML=`<option value="">🛠️ ${t("thShift")}: ${t("all")}</option>`+Object.keys(SHIFTS).map(k=>`<option value="${k}">${SHIFTS[k][lang]}</option>`).join("");
+}
+
+/* ============ RENDER ============ */
+function daysInMonth(lv,year,mi){
+  const s=new Date(lv.from+"T00:00:00"), e=new Date((lv.to||lv.from)+"T00:00:00");
+  const mS=new Date(year,mi,1), mE=new Date(year,mi+1,0);
+  const a=s>mS?s:mS, b=e<mE?e:mE;
+  if(b<a)return 0; return Math.round((b-a)/86400000)+1;
+}
+function renderAll(){try{var _el=document.getElementById("lcBuild");if(_el&&_el.textContent.length<60)_el.textContent+=" R"}catch(_){};try{if(document.title.length<80)document.title+=" R"}catch(_){}try{renderStats()}catch(e){console.error("renderStats",e);dbgErr("renderStats: "+(e&&e.message||e))}try{renderDashboard()}catch(e){console.error("renderDashboard",e);dbgErr("renderDashboard: "+(e&&e.message||e))}try{renderCalendar()}catch(e){console.error("renderCalendar",e);dbgErr("renderCalendar: "+(e&&e.message||e))}try{renderChart()}catch(e){console.error("renderChart",e);dbgErr("renderChart: "+(e&&e.message||e))}try{renderAll()}catch(e){console.error("renderAll",e);dbgErr("renderAll: "+(e&&e.message||e))}try{renderTaken()}catch(e){console.error("renderTaken",e);dbgErr("renderTaken: "+(e&&e.message||e))}try{renderUpcoming()}catch(e){console.error("renderUpcoming",e);dbgErr("renderUpcoming: "+(e&&e.message||e))}try{renderTeam()}catch(e){console.error("renderTeam",e);dbgErr("renderTeam: "+(e&&e.message||e))}try{renderSched()}catch(e){console.error("renderSched",e);dbgErr("renderSched: "+(e&&e.message||e))}try{syncAdminUI()}catch(e){console.error("syncAdminUI",e);dbgErr("syncAdminUI: "+(e&&e.message||e))}try{updateSyncPill()}catch(e){console.error("updateSyncPill",e);dbgErr("updateSyncPill: "+(e&&e.message||e))}}
+function renderStats(){
+  const today=todayStr();
+  document.getElementById("stStaff").textContent=staff.length;
+  document.getElementById("stTaken").textContent=leaves.filter(l=>l.status==="approved"&&l.from.slice(0,4)==CUR_YEAR&&l.from<=today).reduce((a,l)=>a+effDays(l),0);
+  document.getElementById("stUpcoming").textContent=leaves.filter(l=>l.status==="approved"&&l.from>today).reduce((a,l)=>a+effDays(l),0);
+  document.getElementById("stToday").textContent=leaves.filter(l=>l.status==="approved"&&l.from<=today&&(l.to||l.from)>=today).length;
+}
+function pillStatus(s){return `<span class="pill pill-${s}">${STATUS[s]?STATUS[s][lang]:s}</span>`}
+function pillType(k){return `<span class="pill pill-type">${TYPES[k]?TYPES[k][lang]:k}</span>`}
+function actionBtns(id){return `<div class="row-actions no-print" style="display:flex;gap:6px"><button class="icon-btn edit need-leave" onclick="editLeave('${id}')" title="Edit">✏️</button><button class="icon-btn del admin-only" onclick="delLeave('${id}')" title="Delete">🗑️</button></div>`}
+function renderDashboard(){
+  const today=todayStr();
+  const onT=leaves.filter(l=>l.status==="approved"&&l.from<=today&&(l.to||l.from)>=today);
+  document.getElementById("todayList").innerHTML=onT.length?onT.map(l=>`<div class="list-item">${AV(l.name)}<div class="meta"><b>${esc(l.name)}</b><small>${fmt(l.from)} → ${fmt(l.to||l.from)} • ${pillType(l.type)}</small></div></div>`).join(""):`<div class="empty"><div class="big">😊</div>${t("noData")}</div>`;
+  const up=leaves.filter(l=>l.status==="approved"&&l.from>today).sort((a,b)=>a.from.localeCompare(b.from)).slice(0,5);
+  {const duty=schedOn(today).filter(s=>s.shift!=="off");if(duty.length){document.getElementById("todayList").innerHTML+=`<div style="margin-top:10px"><b>🛠️ ${t("onDutyToday")} (${duty.length})</b></div>`+duty.map(s=>`<div class="list-item" style="margin-top:6px">${AV(s.name)}<div class="meta"><b>${esc(s.name)}</b>${s.note?`<small>${esc(s.note)}</small>`:""}</div>${pillShift(s.shift)}</div>`).join("")}}
+  document.getElementById("nextList").innerHTML=up.length?up.map(l=>{const d=Math.ceil((new Date(l.from)-new Date(today))/86400000);const lbl=d===1?t("tomorrow"):t("inDays").replace("{n}",d);return `<div class="list-item">${AV(l.name)}<div class="meta"><b>${esc(l.name)}</b><small>${fmt(l.from)} → ${fmt(l.to||l.from)} • ${effDays(l)} ${t("days")}</small></div><span class="countdown">${lbl}</span></div>`}).join(""):`<div class="empty"><div class="big">🗓️</div>${t("noData")}</div>`;
+  const per=staff.map(n=>({n,d:leaves.filter(l=>l.name===n&&l.status==="approved"&&l.from.slice(0,4)==CUR_YEAR).reduce((a,l)=>a+effDays(l),0)})).sort((a,b)=>b.d-a.d);
+  const max=Math.max(1,...per.map(p=>p.d));
+  document.getElementById("barChart").innerHTML=per.map(p=>`<div class="bar-row"><div class="bar-name">${esc(p.n)}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.max(8,p.d/max*100)}%">${p.d}</div></div></div>`).join("");
+  const rec=[...leaves].sort((a,b)=>(b.created||0)-(a.created||0)).slice(0,5);
+  document.getElementById("recentList").innerHTML=rec.map(l=>`<div class="list-item">${AV(l.name)}<div class="meta"><b>${esc(l.name)}</b><small>${fmt(l.from)} → ${fmt(l.to||l.from)} • ${pillType(l.type)}</small></div>${pillStatus(l.status)}</div>`).join("");
+}
+function renderChart(){
+  const y=+(document.getElementById("chartYear").value||CUR_YEAR);
+  let html=`<thead><tr><th>👤 ${t("thName")}</th>${MONTHS[lang].map(m=>`<th>${m}</th>`).join("")}<th>${t("total")}</th></tr></thead><tbody>`;
+  staff.forEach(n=>{
+    let tot=0; html+=`<tr><td><a href="#" onclick="filterBy('${esc(n)}');return false" style="color:var(--brand1);font-weight:800">${esc(n)}</a></td>`;
+    for(let m=0;m<12;m++){const d=leaves.filter(l=>l.name===n&&l.status==="approved").reduce((a,l)=>a+wdaysInMonth(l,y,m),0);tot+=d;html+=`<td class="${d>0?"cell-has":""}">${d||""}</td>`}
+    html+=`<td class="cell-total">${tot}</td></tr>`;
+  });
+  html+="</tbody>"; document.getElementById("matrixTable").innerHTML=html;
+}
+function leaveRow(l,showStatus=true){
+  return `<tr><td><b>${esc(l.name)}</b></td><td style="white-space:nowrap">${fmt(l.from)}</td><td style="white-space:nowrap">${fmt(l.to||l.from)}</td><td><b>${effDays(l)}</b></td><td>${pillType(l.type)}</td><td>${esc(l.reason||"—")}</td>${showStatus?`<td>${pillStatus(l.status)}</td>`:""}<td class="no-print">${actionBtns(l.id)}</td></tr>`;
+}
+function renderAll(){
+  const q=(document.getElementById("fSearch").value||"").toLowerCase(), fn=document.getElementById("fName").value, fm=document.getElementById("fMonth").value, ft=document.getElementById("fType").value, fs=document.getElementById("fStatus").value;
+  const rows=leaves.filter(l=>{
+    if(fn&&l.name!==fn)return false; if(ft&&l.type!==ft)return false; if(fs&&l.status!==fs)return false;
+    if(fm!==""&&+l.from.slice(5,7)-1!==+fm&&+((l.to||l.from).slice(5,7))-1!==+fm)return false;
+    if(q&&!(l.name.toLowerCase().includes(q)||(l.reason||"").toLowerCase().includes(q)))return false;
+    return true;
+  }).sort((a,b)=>b.from.localeCompare(a.from));
+  document.getElementById("allBody").innerHTML=rows.length?rows.map(l=>leaveRow(l)).join(""):`<tr><td colspan="8"><div class="empty"><div class="big">🔍</div>${t("noData")}</div></td></tr>`;
+}
+function renderTaken(){
+  const y=document.getElementById("takenYear").value||CUR_YEAR, today=todayStr();
+  const rows=leaves.filter(l=>l.status==="approved"&&l.from.slice(0,4)==y&&l.from<=today).sort((a,b)=>b.from.localeCompare(a.from));
+  const tot=rows.reduce((a,l)=>a+effDays(l),0);
+  document.getElementById("takenBody").innerHTML=(rows.length?rows.map(l=>leaveRow(l,false)).join(""):`<tr><td colspan="7"><div class="empty"><div class="big">✅</div>${t("noData")}</div></td></tr>`)+`<tr><td colspan="3" style="text-align:right"><b>${t("total")}</b></td><td><b>${tot}</b></td><td colspan="3"></td></tr>`;
+}
+function renderUpcoming(){
+  const today=todayStr();
+  const rows=leaves.filter(l=>l.status==="approved"&&l.from>today).sort((a,b)=>a.from.localeCompare(b.from));
+  document.getElementById("upcomingList").innerHTML=rows.length?rows.map(l=>{const d=Math.ceil((new Date(l.from)-new Date(today))/86400000);const lbl=d===1?t("tomorrow"):t("inDays").replace("{n}",d);
+    return `<div class="list-item">${AV(l.name)}<div class="meta"><b>${esc(l.name)} — ${fmt(l.from)} → ${fmt(l.to||l.from)} (${effDays(l)} ${t("days")})</b><small>${pillType(l.type)} • ${esc(l.reason||"—")}</small></div><span class="countdown">⏳ ${lbl}</span><span class="no-print">${actionBtns(l.id)}</span></div>`}).join(""):`<div class="empty"><div class="big">🗓️</div>${t("noData")}</div>`;
+}
+function renderTeam(){
+  const today=todayStr();
+  document.getElementById("staffGrid").innerHTML=staff.map(n=>{
+    const tk=leaves.filter(l=>l.name===n&&l.status==="approved"&&l.from.slice(0,4)==CUR_YEAR&&l.from<=today).reduce((a,l)=>a+effDays(l),0);
+    const up=leaves.filter(l=>l.name===n&&l.status==="approved"&&l.from>today).reduce((a,l)=>a+effDays(l),0);
+    const pd=leaves.filter(l=>l.name===n&&l.status==="pending").length;
+    return `<div class="staff-card"><span class="staff-del admin-only no-print"><button class="icon-btn del" onclick="delStaff('${esc(n)}')">🗑️</button></span><div class="avatar" style="background:${colorFor(n)}">${esc(n.trim()[0]).toUpperCase()}</div><h4><a href="#" onclick="filterBy('${esc(n)}');return false" style="color:var(--ink);text-decoration:none">${esc(n)}</a></h4><div class="staff-mini"><span class="mini">✅ ${t("taken")}: <b>${tk}</b></span><span class="mini">🗓️ ${t("upcoming")}: <b>${up}</b></span><span class="mini">⏳ ${t("pending")}: <b>${pd}</b></span></div></div>`;
+  }).join("");
+}
+function filterBy(n){document.querySelector('[data-tab="all"]').click();document.getElementById("fName").value=n;renderAll()}
+
+/* ============ AUTH ============ */
+function syncAdminUI(){
+  refreshAuth();
+  document.getElementById("loginBtn").style.display=currentUser?"none":"";
+  document.getElementById("logoutBtn").style.display=currentUser?"":"none";
+  document.getElementById("modeBadge").innerHTML=currentUser?("✏️ "+`<span>${esc(currentUser.name)} • ${t("role_"+currentUser.role)}</span>`):("👁️ "+`<span>${t("viewMode")}</span>`);
+}
+function requireAdmin(fn){if(isAdmin){fn()}else{openLogin();toast(currentUser?t("noPerm"):t("needLogin"))}}
+function openLogin(){document.getElementById("loginUser").innerHTML=Object.keys(users).map(u=>`<option ${currentUser&&currentUser.name===u?"selected":""}>${esc(u)}</option>`).join("");document.getElementById("loginPass").value="";openModal("mLogin");setTimeout(()=>document.getElementById("loginPass").focus(),150)}
+function doLogin(){const u=document.getElementById("loginUser").value,p=document.getElementById("loginPass").value;if(users[u]&&users[u].pass===p){currentUser={name:u,role:users[u].role};sessionStorage.setItem("lc_user",u);sessionStorage.setItem("lc_admin",users[u].role==="admin"?"1":"0");closeModal("mLogin");syncAdminUI();renderAll();toast(t("loginOk"))}else{toast(t("wrongPass"))}}
+function logout(){currentUser=null;sessionStorage.removeItem("lc_user");sessionStorage.setItem("lc_admin","0");syncAdminUI();renderAll();toast(t("logoutOk"))}
+
+/* ============ CRUD ============ */
+function openModal(id){document.getElementById(id).classList.add("open")}
+function closeModal(id){document.getElementById(id).classList.remove("open")}
+document.querySelectorAll(".modal-back").forEach(m=>m.addEventListener("click",e=>{if(e.target===m)m.classList.remove("open")}));
+function openLeaveModal(){if(!canLeave())return noPerm();
+  document.getElementById("lvId").value="";document.getElementById("leaveFormTitle").textContent="➕ "+t("addLeaveTitle");
+  document.getElementById("lvFrom").value=todayStr();document.getElementById("lvTo").value=todayStr();
+  document.getElementById("lvDays").value=workingDays(todayStr(),todayStr());document.getElementById("lvReason").value="";
+  document.getElementById("lvName").innerHTML=staff.map(s=>`<option>${esc(s)}</option>`).join("");
+  updateBreakdown();
+  openModal("mLeave");
+}
+function updateBreakdown(){
+  const from=document.getElementById("lvFrom").value,to=document.getElementById("lvTo").value||from,el=document.getElementById("lvBreakdown");
+  if(!from||!el){if(el)el.textContent="";return}
+  const cal=diffDays(from,to),wd=workingDays(from,to),off=cal-wd;
+  el.textContent=(wd===0)?t("wdZero"):t("wdBreak").replace("{cal}",cal).replace("{off}",off).replace("{wd}",wd);
+}
+function autoDays(){
+  const f=document.getElementById("lvFrom").value,tt=document.getElementById("lvTo").value;
+  if(!f)return;
+  if(tt&&tt<f)document.getElementById("lvTo").value=f;
+  const from=document.getElementById("lvFrom").value,to=document.getElementById("lvTo").value||from;
+  document.getElementById("lvDays").value=workingDays(from,to);
+  updateBreakdown();
+}
+function saveLeave(){
+  const id=document.getElementById("lvId").value, name=document.getElementById("lvName").value, from=document.getElementById("lvFrom").value, to=document.getElementById("lvTo").value||from;
+  if(!name||!from)return toast("❗");
+  const autoWD=workingDays(from,to);
+  let entered=parseFloat(document.getElementById("lvDays").value);
+  if(isNaN(entered))entered=autoWD;
+  const manual=(entered!==autoWD)?entered:null;
+  const days=entered, type=document.getElementById("lvType").value, reason=document.getElementById("lvReason").value.trim(), status=document.getElementById("lvStatus").value;
+  if(id){const l=leaves.find(x=>x.id===id);Object.assign(l,{name,from,to,days,type,reason,status});if(manual==null)delete l.manual;else l.manual=manual}
+  else{const nl={id:"L"+Date.now(),name,from,to,days,type,reason,status,created:Date.now()};if(manual!=null)nl.manual=manual;leaves.push(nl)}
+  saveAll();cloudPush();closeModal("mLeave");buildFilters();renderAll();toast(t("saved"));
+}
+function editLeave(id){if(!canLeave())return noPerm();const l=leaves.find(x=>x.id===id);if(!l)return;
+  document.getElementById("lvId").value=l.id;document.getElementById("leaveFormTitle").textContent="✏️ "+t("editLeave");
+  document.getElementById("lvName").innerHTML=staff.map(s=>`<option ${s===l.name?"selected":""}>${esc(s)}</option>`).join("");
+  document.getElementById("lvFrom").value=l.from;document.getElementById("lvTo").value=l.to||l.from;
+  document.getElementById("lvDays").value=effDays(l);document.getElementById("lvType").value=l.type;
+  document.getElementById("lvReason").value=l.reason||"";document.getElementById("lvStatus").value=l.status;
+  updateBreakdown();
+  openModal("mLeave");
+}
+function delLeave(id){if(!isAdmin)return noPerm();if(!confirm(t("deleteConfirm")))return;leaves=leaves.filter(x=>x.id!==id);saveAll();cloudPush();buildFilters();renderAll();toast(t("deleted"))}
+function openStaffModal(){if(!isAdmin)return noPerm();document.getElementById("staffName").value="";openModal("mStaff")}
+function saveStaff(){const n=document.getElementById("staffName").value.trim();if(!n)return;if(staff.includes(n))return toast("❗ "+n);staff.push(n);staff.sort();saveAll();cloudPush();closeModal("mStaff");buildFilters();renderAll();toast(t("staffAdded"))}
+function delStaff(n){if(!isAdmin)return noPerm();if(!confirm(t("deleteStaff")))return;staff=staff.filter(s=>s!==n);leaves=leaves.filter(l=>l.name!==n);saveAll();cloudPush();buildFilters();renderAll();toast(t("staffDeleted"))}
+function openPassModal(){if(!currentUser)return noPerm();document.getElementById("oldPass").value="";document.getElementById("newPass").value="";openModal("mPass")}
+function savePass(){if(!currentUser)return noPerm();const o=document.getElementById("oldPass").value,n=document.getElementById("newPass").value;if(!users[currentUser.name]||users[currentUser.name].pass!==o)return toast(t("wrongPass"));if(n.length<4)return toast("❗ min 4");users[currentUser.name].pass=n;saveUsers();closeModal("mPass");toast(t("passChanged"))}
+function openUsersModal(){if(!isAdmin)return noPerm();document.getElementById("usersBody").innerHTML=Object.keys(users).map(u=>`<div class="list-item">${AV(u)}<div class="meta"><b>${esc(u)}</b><small>${t("role_"+users[u].role)}</small></div><input type="password" id="pw_${u}" placeholder="••••" style="width:110px;border:1.5px solid var(--line);border-radius:8px;padding:7px 9px;font-family:inherit"><button class="btn btn-primary btn-sm" onclick="saveUserPass('${u}')">💾</button></div>`).join("");openModal("mUsers")}
+function saveUserPass(u){if(!isAdmin)return noPerm();const v=document.getElementById("pw_"+u).value;if(!v||v.length<4)return toast("❗ min 4");users[u].pass=v;saveUsers();document.getElementById("pw_"+u).value="";toast(t("passChanged")+" — "+u)}
+function resetDemo(){if(!isAdmin)return noPerm();if(!confirm("↩️ ?"))return;staff=[...DEFAULT_STAFF];leaves=JSON.parse(JSON.stringify(SEED));leaves.forEach(l=>l.created=Date.now());holidays=JSON.parse(JSON.stringify(SL_HOLIDAYS_2026));saveAll();cloudPush();buildFilters();renderAll();toast(t("resetDone"))}
+
+/* ============ EXPORT / IMPORT ============ */
+function download(name,content,mime){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([content],{type:mime}));a.download=name;a.click()}
+function exportJSON(){if(!isAdmin)return noPerm();const payload={app:"leave-chart",version:1,updatedAt:new Date().toISOString(),staff:staff,leaves:leaves,holidays:holidays,schedules:schedules};download("data.json",JSON.stringify(payload,null,2),"application/json");lastJsonHash=dataHash();localStorage.setItem("lc_clean_hash",lastJsonHash);updateSyncPill();toast(t("exportedJson"))}
+function exportCSV(){let csv="Name,From,To,Days,Type,Reason,Status\n";leaves.forEach(l=>{csv+=`"${l.name}",${l.from},${l.to||l.from},${effDays(l)},${l.type},"${(l.reason||"").replace(/"/g,'""')}",${l.status}\n`});download("leave-chart-"+CUR_YEAR+".csv",csv,"text/csv")}
+function importJSON(e){if(!isAdmin)return noPerm();const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!validData(d))throw 0;applyData(d);cloudPush();buildFilters();renderAll();updateSyncPill();toast(t("importOk"))}catch{toast(t("importFail"))}};r.readAsText(f);e.target.value=""}
+function toast(msg){const el=document.getElementById("toast");el.textContent=msg;el.classList.add("show");clearTimeout(el._h);el._h=setTimeout(()=>el.classList.remove("show"),2400)}
+
+/* ============ MONTH CALENDAR ============ */
+function calPrev(){calM--;if(calM<0){calM=11;calY--}renderCalendar()}
+function calNext(){calM++;if(calM>11){calM=0;calY++}renderCalendar()}
+function calToday(){const n=new Date();calY=n.getFullYear();calM=n.getMonth();calSel=todayStr();renderCalendar()}
+function selectDayFull(ds){const p=ds.split("-");calY=+p[0];calM=+p[1]-1;calSel=ds;renderCalendar()}
+function renderCalendar(){try{var _el=document.getElementById("lcBuild");if(_el&&_el.textContent.length<60)_el.textContent+=" C"}catch(_){};try{if(document.title.length<80)document.title+=" C"}catch(_){}
+  const title=document.getElementById("calTitle");
+  if(title)title.textContent=MONTHS_FULL[lang][calM]+" "+calY;
+  const grid=document.getElementById("calGrid");if(!grid)return;
+  const today=todayStr();
+  const firstDow=(new Date(calY,calM,1).getDay()+6)%7;
+  const dim=new Date(calY,calM+1,0).getDate();
+  const prevDim=new Date(calY,calM,0).getDate();
+  let cells="";
+  WD[lang].forEach(w=>{cells+=`<div class="cal-wd">${w}</div>`});
+  const total=Math.ceil((firstDow+dim)/7)*7;
+  for(let i=0;i<total;i++){
+    let ds,dayNum,other=false;
+    if(i<firstDow){const pm=calM===0?11:calM-1,py=calM===0?calY-1:calY;dayNum=prevDim-firstDow+1+i;ds=dstr(py,pm,dayNum);other=true}
+    else if(i-firstDow<dim){dayNum=i-firstDow+1;ds=dstr(calY,calM,dayNum)}
+    else{const nm=calM===11?0:calM+1,ny=calM===11?calY+1:calY;dayNum=i-firstDow-dim+1;ds=dstr(ny,nm,dayNum);other=true}
+    const hs=holsOn(ds);
+    const dow=(new Date(ds+"T00:00:00").getDay()+6)%7;
+    const isSun=(dow===6),we=(dow>=5);
+    const isOff=(isSun||hs.length>0);
+    const on=isOff?[]:leavesOn(ds),pd=isOff?[]:pendingOn(ds);const sc=schedOn(ds);
+    let cls="cal-day"+(other?" other":"")+((we&&!isOff)?" we":"");
+    if(isOff)cls+=" hol";
+    else if(on.length)cls+=" leave";
+    else if(pd.length)cls+=" pend";
+    if(ds===today)cls+=" today";
+    if(ds===calSel)cls+=" sel";
+    const tip=esc(isOff?(hs.length?hs.map(holName).join(" • "):t("sunday")):hs.map(holName).concat(on.map(l=>l.name)).join(" • "));
+    const tag=hs.length?`🌟 ${esc(holName(hs[0]))}${hs.length>1?" +"+(hs.length-1):""}`:(isSun?`☀️ ${t("sunday")}`:"");
+    cells+=`<button class="${cls}" onclick="selectDayFull('${ds}')" title="${tip}"><span class="cal-num">${dayNum}</span>${tag?`<span class="cal-hol">${tag}</span>`:""}${(!isOff&&on.length)?`<span class="cal-badge">${on.length}</span>`:""}${sc.length?`<span class="cal-sch">🛠️${sc.length}</span>`:""}</button>`;
+  }
+  grid.innerHTML=cells;
+  renderCalDetail();
+}
+function renderCalDetail(){
+  const el=document.getElementById("calDetail");if(!el)return;
+  const hs=holsOn(calSel);
+  const p=calSel.split("-"),y=+p[0],m=+p[1],d=+p[2];
+  const dow=(new Date(y,m-1,d).getDay()+6)%7,wd=WD[lang][dow];
+  const isOff=(dow===6||hs.length>0);
+  const on=isOff?[]:leavesOn(calSel),pd=isOff?[]:pendingOn(calSel);
+  let html=`<b>📅 ${d} ${MONTHS_FULL[lang][m-1]} ${y} (${wd})</b>`;
+  if(dow===6&&!hs.length)html+=` <span class="pill" style="background:#fef08a;color:#854d0e">☀️ ${t("sunday")}</span>`;
+  if(isOff)html+=` <span class="pill" style="background:#fef3c7;color:#92400e">${t("holForAll")}</span>`;
+  if(hs.length)html+=`<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">`+hs.map(h=>`<span class="pill" style="background:#fef08a;color:#854d0e">🌟 ${esc(holName(h))}${(currentUser&&currentUser.role==="admin")?` <a href="#" onclick="delHoliday('${h.id}');return false" style="color:#b91c1c;text-decoration:none;font-weight:800" title="Remove">✕</a>`:""}</span>`).join("")+`</div>`;
+  if(on.length){html+=`<div style="margin-top:10px"><b>🔴 ${t("onLeaveN").replace("{n}",on.length)}</b></div>`+on.map(l=>`<div class="list-item" style="margin-top:6px">${AV(l.name)}<div class="meta"><b>${esc(l.name)}</b><small>${fmt(l.from)} → ${fmt(l.to||l.from)} • ${esc(l.reason||"—")}</small></div>${pillType(l.type)}</div>`).join("")}
+  if(pd.length){html+=`<div style="margin-top:10px"><b>🟡 ${t("pending")} (${pd.length})</b></div>`+pd.map(l=>`<div class="list-item" style="margin-top:6px">${AV(l.name)}<div class="meta"><b>${esc(l.name)}</b><small>${fmt(l.from)} → ${fmt(l.to||l.from)} • ${esc(l.reason||"—")}</small></div>${pillStatus(l.status)}</div>`).join("")}
+  const sc=schedOn(calSel);
+  if(sc.length){html+=`<div style="margin-top:10px"><b>🛠️ ${t("schedForDay")}</b></div>`+sc.map(s=>`<div class="list-item" style="margin-top:6px">${AV(s.name)}<div class="meta"><b>${esc(s.name)}</b>${s.note?`<small>${esc(s.note)}</small>`:""}</div>${pillShift(s.shift)}</div>`).join("")}
+  if(!isOff&&!hs.length&&!on.length&&!pd.length&&!sc.length)html+=`<div class="hint" style="margin-top:6px">${t("noLeaveDay")}</div>`;
+  el.innerHTML=html;
+}
+function openHolModal(){if(!isAdmin)return noPerm();document.getElementById("holDate").value=calSel||todayStr();document.getElementById("holEn").value="";document.getElementById("holSi").value="";document.getElementById("holTa").value="";openModal("mHol")}
+function saveHol(){
+  const d=document.getElementById("holDate").value,en=document.getElementById("holEn").value.trim(),si=document.getElementById("holSi").value.trim(),ta=document.getElementById("holTa").value.trim();
+  if(!d||!en)return toast("❗");
+  holidays.push({id:"H"+Date.now(),d:d,en:en,si:si||en,ta:ta||en});
+  saveAll();cloudPush();closeModal("mHol");renderAll();toast(t("holAdded"));
+}
+function delHoliday(id){if(!isAdmin)return noPerm();const h=holidays.find(x=>x.id===id);if(!h)return;if(!confirm("🗑️ "+holName(h)+" ?"))return;holidays=holidays.filter(x=>x.id!==id);saveAll();cloudPush();renderAll();toast(t("holDeleted"))}
+
+/* ============ GITHUB data.json SYNC ============ */
+let lastJsonHash=localStorage.getItem("lc_clean_hash")||"";
+let jsonUpdatedAt=null;
+function hasSnapshot(){return !!localStorage.getItem("lc_staff")}
+function hashObj(o){const s=JSON.stringify(o);let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))|0;return "h"+(h>>>0).toString(36)+"-"+s.length}
+function dataHash(){return hashObj({staff:staff,leaves:leaves,holidays:holidays,schedules:schedules})}
+function validData(d){
+  if(!d||typeof d!=="object")return false;
+  if(!Array.isArray(d.staff)||!Array.isArray(d.leaves))return false;
+  if(d.holidays!=null&&!Array.isArray(d.holidays))return false;
+  if(d.schedules!=null&&!Array.isArray(d.schedules))return false;
+  if(!d.staff.every(s=>typeof s==="string"&&s.trim()))return false;
+  for(const l of d.leaves){
+    if(!l||typeof l!=="object")return false;
+    if(typeof l.name!=="string"||!/^\d{4}-\d{2}-\d{2}$/.test(l.from||""))return false;
+    if(l.to!=null&&!/^\d{4}-\d{2}-\d{2}$/.test(l.to))return false;
+  }
+  return true;
+}
+function sanitizeLeave(l){
+  if(!l||typeof l!=="object")return null;
+  if(typeof l.name!=="string"||!l.name.trim())return null;
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(l.from||""))return null;
+  const to=(/^\d{4}-\d{2}-\d{2}$/.test(l.to||""))?l.to:l.from;
+  const o={id:String(l.id||("L"+Math.random().toString(36).slice(2))),name:l.name.trim(),from:l.from,to:to,
+    days:(!isNaN(+l.days)?+l.days:workingDays(l.from,to)),
+    type:(TYPES[l.type]?l.type:"annual"),reason:String(l.reason||""),
+    status:(STATUS[l.status]?l.status:"pending"),created:(+l.created||0)};
+  if(l.manual!=null&&!isNaN(+l.manual))o.manual=+l.manual;
+  return o;
+}
+function sanitizeHol(h){
+  if(!h||typeof h!=="object")return null;
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(h.d||""))return null;
+  const en=String(h.en||h.si||h.ta||"Holiday");
+  return {id:String(h.id||("H"+Math.random().toString(36).slice(2))),d:h.d,en:en,si:String(h.si||en),ta:String(h.ta||en)};
+}
+function sanitizeSched(x){if(!x||typeof x!=="object")return null;if(typeof x.name!=="string"||!x.name.trim())return null;if(!/^\d{4}-\d{2}-\d{2}$/.test(x.date||""))return null;return{id:String(x.id||("S"+Math.random().toString(36).slice(2))),name:x.name.trim(),date:x.date,shift:(SHIFTS[x.shift]?x.shift:"custom"),note:String(x.note||""),created:(+x.created||0)}}
+function normalizeData(d){d=d||{};const n={staff:(Array.isArray(d.staff)?d.staff:[]).map(s=>String(s??"").trim()).filter(Boolean),leaves:(Array.isArray(d.leaves)?d.leaves:[]).map(sanitizeLeave).filter(Boolean),holidays:Array.isArray(d.holidays)?d.holidays.map(sanitizeHol).filter(Boolean):[],schedules:Array.isArray(d.schedules)?d.schedules.map(sanitizeSched).filter(Boolean):[]};if(n.staff.length===0&&n.leaves.length>0)n.staff=[...new Set(n.leaves.map(l=>l.name))].sort();return n}
+function applyData(d){const n=normalizeData(d);staff=n.staff;leaves=n.leaves;holidays=n.holidays;schedules=n.schedules;saveAll()}
+function fmtDateTime(iso){try{const d=new Date(iso);if(isNaN(d))return "";return d.getDate()+" "+MONTHS_FULL[lang][d.getMonth()]+" "+d.getFullYear()+" "+String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")}catch(e){return ""}}
+function updateSyncPill(){
+  const pill=document.getElementById("syncPill"),info=document.getElementById("jsonInfo");
+  const dirty=(dataHash()!==lastJsonHash);
+  if(pill){pill.textContent=dirty?t("syncDirty"):t("syncOk");pill.style.background=dirty?"#ffedd5":"#dcfce7";pill.style.color=dirty?"#9a3412":"#15803d"}
+  if(info){const dt=jsonUpdatedAt?fmtDateTime(jsonUpdatedAt):"";let msg=t("jsonLocal");if(jsonUpdatedAt)msg=t("jsonLive")+(dt?" • "+dt:"");if(gMode)msg="📄 Google"+(dt?" • "+dt:"");if(fbMode)msg="🔥 Live "+(fbConnected?"🟢":"🔴")+(gMode?"+📄":"")+(dt?" • "+dt:"");info.textContent=msg}
+}
+async function loadFromJson(silent,force){
+  try{
+    if(!force&&hasSnapshot()&&(dataHash()!==lastJsonHash)){updateSyncPill();return "skipped"}
+    const r=await fetch("data.json?v="+Date.now(),{cache:"no-store"});
+    if(!r.ok)throw 0;
+    const d=await r.json();
+    if(!validData(d))throw 0;
+    if(!force&&d.leaves.length===0&&(staff.length>0||leaves.length>0)){updateSyncPill();if(!silent)toast(t("jsonEmpty"));return "skipped"}
+    applyData(d);
+    jsonUpdatedAt=d.updatedAt||null;
+    lastJsonHash=dataHash();localStorage.setItem("lc_clean_hash",lastJsonHash);
+    try{buildFilters()}catch(e){dbgErr("sync-filters: "+(e&&e.message||e))}renderAll();
+    return "ok";
+  }catch(e){updateSyncPill();if(!silent)toast(t("jsonFail"));return "fail"}
+}
+/* ============ WORK SCHEDULE ============ */
+function schedOn(ds){return schedules.filter(s=>s.date===ds)}
+function pillShift(k){const m={morning:["#dbeafe","#1d4ed8"],evening:["#fef3c7","#b45309"],night:["#e0e7ff","#3730a3"],full:["#dcfce7","#15803d"],off:["#f1f5f9","#64748b"],custom:["#f1f5f9","#475569"]};const c=m[k]||m.custom;return `<span class="pill" style="background:${c[0]};color:${c[1]}">${SHIFTS[k]?SHIFTS[k][lang]:k}</span>`}
+function schedBtns(id){return `<div class="row-actions no-print" style="display:flex;gap:6px"><button class="icon-btn edit need-sched" onclick="editSched('${id}')" title="Edit">✏️</button><button class="icon-btn del need-scheddel" onclick="delSched('${id}')" title="Delete">🗑️</button></div>`}
+function openSchedModal(){
+  if(!canSched())return noPerm();
+  document.getElementById("scId").value="";document.getElementById("schedFormTitle").textContent="➕ "+t("addSched");
+  document.getElementById("scName").innerHTML=staff.map(s=>`<option>${esc(s)}</option>`).join("");
+  document.getElementById("scFrom").value=todayStr();document.getElementById("scTo").value=todayStr();
+  document.getElementById("scShift").innerHTML=Object.keys(SHIFTS).map(k=>`<option value="${k}">${SHIFTS[k][lang]}</option>`).join("");
+  document.getElementById("scNote").value="";updateSchedHint();openModal("mSched");
+}
+function updateSchedHint(){const f=document.getElementById("scFrom").value,tt=document.getElementById("scTo").value||f,el=document.getElementById("scRangeHint");if(!f){el.textContent="";return}if(tt<f)document.getElementById("scTo").value=f;const n=diffDays(document.getElementById("scFrom").value,document.getElementById("scTo").value);el.textContent=t("rangeHint").replace("{n}",n).replace("{n}",n)}
+function saveSched(){
+  if(!canSched())return noPerm();
+  const id=document.getElementById("scId").value,name=document.getElementById("scName").value;
+  const from=document.getElementById("scFrom").value;let to=document.getElementById("scTo").value||from;
+  const shift=document.getElementById("scShift").value,note=document.getElementById("scNote").value.trim();
+  if(!name||!from)return toast("❗");
+  if(to<from)to=from;
+  if(id){const s=schedules.find(x=>x.id===id);if(s)Object.assign(s,{name:name,date:from,shift:shift,note:note})}
+  else{const e=new Date(to+"T00:00:00");for(let d=new Date(from+"T00:00:00");d<=e;d.setDate(d.getDate()+1)){const ds=d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate());const ex=schedules.find(x=>x.name===name&&x.date===ds);if(ex)Object.assign(ex,{shift:shift,note:note});else schedules.push({id:"S"+Date.now()+Math.floor(Math.random()*999),name:name,date:ds,shift:shift,note:note,created:Date.now()})}}
+  saveAll();cloudPush();closeModal("mSched");buildFilters();renderAll();toast(t("saved"));
+}
+function editSched(id){if(!canSched())return noPerm();const s=schedules.find(x=>x.id===id);if(!s)return;document.getElementById("scId").value=s.id;document.getElementById("schedFormTitle").textContent="✏️ "+t("editSched");document.getElementById("scName").innerHTML=staff.map(n=>`<option ${n===s.name?"selected":""}>${esc(n)}</option>`).join("");document.getElementById("scFrom").value=s.date;document.getElementById("scTo").value=s.date;document.getElementById("scShift").innerHTML=Object.keys(SHIFTS).map(k=>`<option value="${k}" ${k===s.shift?"selected":""}>${SHIFTS[k][lang]}</option>`).join("");document.getElementById("scNote").value=s.note||"";updateSchedHint();openModal("mSched")}
+function delSched(id){if(!canSchedDel())return noPerm();if(!confirm(t("schedDelete")))return;schedules=schedules.filter(x=>x.id!==id);saveAll();cloudPush();buildFilters();renderAll();toast(t("deleted"))}
+function renderSched(){
+  const q=(document.getElementById("sSearch").value||"").toLowerCase(),fn=document.getElementById("sName").value,fs=document.getElementById("sShift").value,fm=document.getElementById("sMonth").value;
+  const rows=schedules.filter(s=>{if(fn&&s.name!==fn)return false;if(fs&&s.shift!==fs)return false;if(fm&&s.date.slice(0,7)!==fm)return false;if(q&&!(s.name.toLowerCase().includes(q)||(s.note||"").toLowerCase().includes(q)))return false;return true}).sort((a,b)=>b.date.localeCompare(a.date));
+  document.getElementById("schedBody").innerHTML=rows.length?rows.map(s=>`<tr><td style="white-space:nowrap">${fmt(s.date)}</td><td><b>${esc(s.name)}</b></td><td>${pillShift(s.shift)}</td><td>${esc(s.note||"—")}</td><td class="no-print">${schedBtns(s.id)}</td></tr>`).join(""):`<tr><td colspan="5"><div class="empty"><div class="big">🛠️</div>${t("noData")}</div></td></tr>`;
+}
+function reloadJson(){if(currentUser&&(dataHash()!==lastJsonHash)){if(!confirm(t("confirmReload")))return}loadFromJson(false,true).then(r=>{if(gMode&&(!fbMode||!fbConnected))gLoad(false);else if(r==="ok")toast(t("syncOk"))})}
+
+/* ============ FIREBASE LIVE SYNC ============ */
+let fbMode=false,fbRef=null,fbConnected=false;
+function fbCfg(){try{const c=window.FIREBASE_CONFIG;if(!c||c.enabled===false)return null;if(!c.apiKey||!c.databaseURL)return null;if(localStorage.getItem("lc_fb_off")==="1")return null;return c}catch(e){return null}}
+function fbInit(){
+  const c=fbCfg();
+  if(!c||typeof firebase==="undefined")return false;
+  try{
+    let app;try{app=firebase.app()}catch(e){app=firebase.initializeApp(c)}
+    fbRef=app.database().ref("leaveChart");
+    try{firebase.database().ref(".info/connected").on("value",s=>{fbConnected=!!s.val();updateSyncPill()})}catch(e){}
+    fbRef.on("value",snap=>{
+      const d=snap.val();
+      if(!d||!validData(d))return;
+      const clean=localStorage.getItem("lc_clean_hash")||"";
+      const localH=dataHash();
+      const n=normalizeData(d);
+      if(hashObj(n)===localH){if(d.updatedAt)jsonUpdatedAt=d.updatedAt;lastJsonHash=localH;localStorage.setItem("lc_clean_hash",localH);updateSyncPill();return}
+      if(localH!==clean){updateSyncPill();toast(t("fbConflict"));return}
+      staff=n.staff;leaves=n.leaves;holidays=n.holidays;schedules=n.schedules;saveAll();
+      jsonUpdatedAt=d.updatedAt||null;
+      lastJsonHash=dataHash();localStorage.setItem("lc_clean_hash",lastJsonHash);
+      try{buildFilters()}catch(e){dbgErr("sync-filters: "+(e&&e.message||e))}renderAll();
+      toast(t("fbLive"));
+    },()=>{fbConnected=false;updateSyncPill()});
+    fbMode=true;fbConnected=true;updateSyncPill();
+    return true;
+  }catch(e){fbMode=false;return false}
+}
+/* ============ GOOGLE DRIVE SYNC (Apps Script) ============ */
+let gMode=false,gPollTimer=null;
+function gCfg(){try{const c=window.GOOGLE_CONFIG;if(!c||c.enabled===false)return null;if(!c.scriptUrl||c.scriptUrl.indexOf("https://")!==0)return null;if(localStorage.getItem("lc_g_off")==="1")return null;return c}catch(e){return null}}
+function gInit(){const c=gCfg();if(!c)return false;gMode=true;gLoad(true);const secs=Math.min(300,Math.max(10,+c.pollSeconds||30));if(gPollTimer)clearInterval(gPollTimer);gPollTimer=setInterval(()=>{if(!fbMode||!fbConnected)gLoad(true)},secs*1000);updateSyncPill();return true}
+async function gLoad(silent){
+  try{
+    const c=gCfg();if(!c)throw 0;
+    const r=await fetch(c.scriptUrl+"?action=read&v="+Date.now(),{cache:"no-store"});
+    if(!r.ok)throw 0;
+    const d=await r.json();
+    if(!d||d.ok!==true||!validData(d))throw 0;
+    const clean=localStorage.getItem("lc_clean_hash")||"";
+    const localH=dataHash();
+    const n=normalizeData(d);
+    if(hashObj(n)===localH){if(d.updatedAt)jsonUpdatedAt=d.updatedAt;lastJsonHash=localH;localStorage.setItem("lc_clean_hash",localH);updateSyncPill();return "ok"}
+    if(localH!==clean){updateSyncPill();if(!silent)toast(t("fbConflict"));return "conflict"}
+    staff=n.staff;leaves=n.leaves;holidays=n.holidays;schedules=n.schedules;saveAll();
+    jsonUpdatedAt=d.updatedAt||null;
+    lastJsonHash=dataHash();localStorage.setItem("lc_clean_hash",lastJsonHash);
+    try{buildFilters()}catch(e){dbgErr("sync-filters: "+(e&&e.message||e))}renderAll();
+    toast(silent?t("fbLive"):t("syncOk"));
+    return "ok";
+  }catch(e){updateSyncPill();if(!silent)toast(t("jsonFail"));return "fail"}
+}
+async function gPush(){
+  if(!gMode)return;
+  const c=gCfg();if(!c)return;
+  try{
+    const payload={action:"write",secret:c.secret||"",updatedAt:new Date().toISOString(),staff:staff,leaves:leaves,holidays:holidays,schedules:schedules};
+    await fetch(c.scriptUrl,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain"},body:JSON.stringify(payload)});
+    await new Promise(r=>setTimeout(r,1500));
+    const r2=await fetch(c.scriptUrl+"?action=read&v="+Date.now(),{cache:"no-store"});
+    const d=await r2.json();
+    if(d&&d.ok===true&&d.updatedAt===payload.updatedAt){jsonUpdatedAt=d.updatedAt;lastJsonHash=dataHash();localStorage.setItem("lc_clean_hash",lastJsonHash);updateSyncPill()}
+    else toast(t("gPushFail"));
+  }catch(e){toast(t("gPushFail"))}
+}
+function cloudPush(){if(fbMode&&fbRef)fbPush();if(gMode)gPush()}
+function openGModal(){if(!isAdmin)return noPerm();
+  const c=(window.GOOGLE_CONFIG&&window.GOOGLE_CONFIG.scriptUrl)?window.GOOGLE_CONFIG:{};
+  document.getElementById("gUrl").value=c.scriptUrl||"";
+  document.getElementById("gSecret").value=c.secret||"";
+  document.getElementById("gPoll").value=(c.pollSeconds||30);
+  document.getElementById("gUse").checked=(localStorage.getItem("lc_g_off")!=="1");
+  document.getElementById("gStatusLine").textContent=gMode?"📄 Google active":(gCfg()?"📄 Configured (Firebase has priority)":"📄 Google not configured");
+  openModal("mG");
+}
+function gFormVals(){return{enabled:true,scriptUrl:document.getElementById("gUrl").value.trim(),secret:document.getElementById("gSecret").value,pollSeconds:Math.min(300,Math.max(10,parseInt(document.getElementById("gPoll").value)||30))}}
+async function gTest(){
+  const u=document.getElementById("gUrl").value.trim();
+  if(!u||u.indexOf("https://")!==0)return toast("❗");
+  toast("📄 …");
+  try{
+    const r=await fetch(u+"?action=read&v="+Date.now(),{cache:"no-store"});
+    const d=await r.json();
+    if(d&&d.ok===true&&validData(d))toast(t("fbTestOk"));
+    else if(d&&d.ok===false&&d.error==="empty")toast(t("gEmpty"));
+    else toast(t("fbTestFail"));
+  }catch(e){toast(t("fbTestFail"))}
+}
+function gDownload(){if(!isAdmin)return noPerm();
+  const c=gFormVals();
+  if(!c.scriptUrl||c.scriptUrl.indexOf("https://")!==0)return toast("❗");
+  download("google-config.js","// Google Apps Script backend config for Leave Chart.\nwindow.GOOGLE_CONFIG = "+JSON.stringify(c,null,2)+";\n","text/javascript");
+  toast(t("gDownloaded"));
+}
+function gPushNow(){if(!isAdmin)return noPerm();if(!gMode)return toast(t("fbTestFail"));gPush();toast(t("fbPushed"))}
+function gToggleDevice(){if(document.getElementById("gUse").checked)localStorage.removeItem("lc_g_off");else localStorage.setItem("lc_g_off","1");location.reload()}
+function bootSync(){loadFromJson(true,false).then(()=>{try{fbInit()}catch(e){}try{gInit()}catch(e){}updateSyncPill()})}
+function fbPush(){
+  if(!fbMode||!fbRef)return;
+  try{
+    const payload={staff:staff,leaves:leaves,holidays:holidays,schedules:schedules,updatedAt:new Date().toISOString()};
+    const c=fbCfg();if(c&&c.writeSecret)payload.secret=c.writeSecret;
+    fbRef.set(payload).catch(()=>{});
+  }catch(e){}
+}
+function openFbModal(){if(!isAdmin)return noPerm();
+  const c=(window.FIREBASE_CONFIG&&window.FIREBASE_CONFIG.apiKey)?window.FIREBASE_CONFIG:{};
+  document.getElementById("fbApiKey").value=c.apiKey||"";
+  document.getElementById("fbAuthDomain").value=c.authDomain||"";
+  document.getElementById("fbDbUrl").value=c.databaseURL||"";
+  document.getElementById("fbProjectId").value=c.projectId||"";
+  document.getElementById("fbSecret").value=c.writeSecret||"";
+  document.getElementById("fbUse").checked=(localStorage.getItem("lc_fb_off")!=="1");
+  document.getElementById("fbStatusLine").textContent=fbMode?("🔥 Live "+(fbConnected?"🟢":"🔴")):((typeof firebase==="undefined")?"📦 Firebase SDK not loaded":"📦 Firebase not configured");
+  openModal("mFb");
+}
+function fbFormVals(){const o={enabled:true,apiKey:document.getElementById("fbApiKey").value.trim(),authDomain:document.getElementById("fbAuthDomain").value.trim(),databaseURL:document.getElementById("fbDbUrl").value.trim(),projectId:document.getElementById("fbProjectId").value.trim()};const s=document.getElementById("fbSecret").value.trim();if(s)o.writeSecret=s;return o}
+function fbTest(){
+  if(typeof firebase==="undefined")return toast(t("fbNoSdk"));
+  const c=fbFormVals();
+  if(!c.apiKey||!c.databaseURL)return toast("❗");
+  toast("🔥 …");
+  const nm="fbtest"+Date.now();
+  let done=false;
+  const finish=(ok,empty)=>{if(done)return;done=true;toast(!ok?t("fbTestFail"):(empty?t("fbTestEmpty"):t("fbTestOk")));try{firebase.app(nm).delete()}catch(e){}};
+  try{
+    const app=firebase.initializeApp(c,nm);
+    app.database().ref("leaveChart").once("value").then(snap=>finish(true,!snap.exists())).catch(()=>finish(false));
+    setTimeout(()=>finish(false),15000);
+  }catch(e){finish(false)}
+}
+function fbDownload(){if(!isAdmin)return noPerm();
+  const c=fbFormVals();
+  if(!c.apiKey||!c.databaseURL)return toast("❗");
+  download("firebase-config.js","// Firebase Realtime Database config for Leave Chart (safe to host publicly - protect data via Database Rules).\nwindow.FIREBASE_CONFIG = "+JSON.stringify(c,null,2)+";\n","text/javascript");
+  toast(t("fbDownloaded"));
+}
+function fbPushNow(){if(!isAdmin)return noPerm();if((!fbMode||!fbRef)&&!gMode)return toast(t("fbTestFail"));cloudPush();toast(t("fbPushed"))}
+function fbToggleDevice(){if(document.getElementById("fbUse").checked)localStorage.removeItem("lc_fb_off");else localStorage.setItem("lc_fb_off","1");location.reload()}
+
+try{applyLang()}catch(e){console.error("boot",e);dbgErr("boot: "+(e&&e.message||e));try{renderAll()}catch(_){}}try{syncAdminUI()}catch(e){console.error("boot",e);dbgErr("boot-admin: "+(e&&e.message||e))}try{bootSync()}catch(e){console.error("boot",e);dbgErr("boot-sync: "+(e&&e.message||e))};try{var _el=document.getElementById("lcBuild");if(_el&&_el.textContent.length<60)_el.textContent+=" \u2713"}catch(_){};try{if(document.title.length<80)document.title+=" \u2713"}catch(_){};setTimeout(function(){try{var _e2=document.getElementById("lcBuild");if(_e2&&_e2.textContent.length<60)_e2.textContent+=" S"}catch(_){}try{if(document.title.length<80)document.title+=" S"}catch(_){}try{if(!document.getElementById("calGrid").innerHTML)renderAll()}catch(e){dbgErr("safety: "+(e&&e.message||e))}},1500)
