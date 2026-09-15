@@ -339,7 +339,7 @@ body.admin .lock-note{display:none}
   </div>
   <div class="footer">
     <span data-i18n="footer1">Leave Chart • Everyone can view, editing needs password</span><br>
-    <span data-i18n="footer2">Data is saved in this browser. Use Export JSON as backup before clearing browser data.</span> <span id="lcBuild" style="opacity:.55">v2026.09.15a</span>
+    <span data-i18n="footer2">Data is saved in this browser. Use Export JSON as backup before clearing browser data.</span> <span id="lcBuild" style="opacity:.55">v2026.09.15b</span>
   </div>
 </div>
 
@@ -531,6 +531,7 @@ const SEED = [
 SEED.forEach(s=>{s.days=diffDays(s.from,s.to);s.created=Date.now()});
 
 function safeParse(s,f){try{const v=JSON.parse(s||"null");return v==null?f:v}catch(e){return f}}
+function dbgErr(m){try{(window.__bootErrs=window.__bootErrs||[]).push(m);var d=document.getElementById("bootErr");if(d){d.style.display="block";var t="\u26a0\ufe0f "+window.__bootErrs.join(" | ");d.textContent=t.length>600?t.slice(0,600)+"\u2026":t}}catch(_){}}
 let lang = localStorage.getItem("lc_lang")||"en";
 if(lang!=="en"&&lang!=="si"&&lang!=="ta")lang="en";
 let staff = safeParse(localStorage.getItem("lc_staff"),[...DEFAULT_STAFF]);
@@ -588,7 +589,7 @@ const SEED_SCHED=[
 SEED_SCHED.forEach(s=>s.created=Date.now());
 let schedules=safeParse(localStorage.getItem("lc_sched_v1"),JSON.parse(JSON.stringify(SEED_SCHED)));
 let calY=new Date().getFullYear(),calM=new Date().getMonth(),calSel=todayStr();
-try{const _c=normalizeData({staff:staff,leaves:leaves,holidays:holidays,schedules:schedules});staff=_c.staff;leaves=_c.leaves;holidays=_c.holidays;schedules=_c.schedules;saveAll()}catch(e){console.error("boot-clean",e)}
+try{const _c=normalizeData({staff:staff,leaves:leaves,holidays:holidays,schedules:schedules});staff=_c.staff;leaves=_c.leaves;holidays=_c.holidays;schedules=_c.schedules;saveAll()}catch(e){console.error("boot-clean",e);dbgErr("boot-clean: "+(e&&e.message||e))}
 function pad2(n){return String(n).padStart(2,"0")}
 function dstr(y,m,d){return y+"-"+pad2(m+1)+"-"+pad2(d)}
 function leavesOn(ds){return leaves.filter(l=>l.status==="approved"&&l.from<=ds&&(l.to||l.from)>=ds)}
@@ -661,7 +662,7 @@ function applyLang(){
   document.getElementById("yearLabel").textContent = (lang==="si"?"වර්ෂය: ":lang==="ta"?"ஆண்டு: ":"Year: ")+CUR_YEAR;
   document.querySelectorAll(".js-year").forEach(e=>e.textContent=CUR_YEAR);
   document.getElementById("stYear1").textContent=CUR_YEAR;
-  try{buildFilters()}catch(e){console.error("filters",e)}try{renderAll()}catch(e){console.error("render",e)}
+  try{buildFilters()}catch(e){console.error("filters",e);dbgErr("filters: "+(e&&e.message||e))}try{renderAll()}catch(e){console.error("render",e);dbgErr("render: "+(e&&e.message||e))}
 }
 function buildFilters(){
   const years=[...new Set(leaves.filter(l=>l&&l.from).map(l=>l.from.slice(0,4)).concat([String(CUR_YEAR)]))].sort().reverse();
@@ -686,7 +687,7 @@ function daysInMonth(lv,year,mi){
   const a=s>mS?s:mS, b=e<mE?e:mE;
   if(b<a)return 0; return Math.round((b-a)/86400000)+1;
 }
-function renderAll(){["renderStats","renderDashboard","renderCalendar","renderChart","renderAll","renderTaken","renderUpcoming","renderTeam","renderSched","syncAdminUI","updateSyncPill"].forEach(f=>{try{window[f]()}catch(e){console.error(f,e)}})}
+function renderAll(){["renderStats","renderDashboard","renderCalendar","renderChart","renderAll","renderTaken","renderUpcoming","renderTeam","renderSched","syncAdminUI","updateSyncPill"].forEach(f=>{try{window[f]()}catch(e){console.error(f,e);dbgErr(f+": "+(e&&e.message||e))}})}
 function renderStats(){
   const today=todayStr();
   document.getElementById("stStaff").textContent=staff.length;
@@ -956,7 +957,7 @@ async function loadFromJson(silent,force){
     applyData(d);
     jsonUpdatedAt=d.updatedAt||null;
     lastJsonHash=dataHash();localStorage.setItem("lc_clean_hash",lastJsonHash);
-    buildFilters();renderAll();
+    try{buildFilters()}catch(e){dbgErr("sync-filters: "+(e&&e.message||e))}renderAll();
     return "ok";
   }catch(e){updateSyncPill();if(!silent)toast(t("jsonFail"));return "fail"}
 }
@@ -1011,10 +1012,10 @@ function fbInit(){
       const n=normalizeData(d);
       if(hashObj(n)===localH){if(d.updatedAt)jsonUpdatedAt=d.updatedAt;lastJsonHash=localH;localStorage.setItem("lc_clean_hash",localH);updateSyncPill();return}
       if(localH!==clean){updateSyncPill();toast(t("fbConflict"));return}
-      staff=n.staff;leaves=n.leaves;holidays=n.holidays;saveAll();
+      staff=n.staff;leaves=n.leaves;holidays=n.holidays;schedules=n.schedules;saveAll();
       jsonUpdatedAt=d.updatedAt||null;
       lastJsonHash=dataHash();localStorage.setItem("lc_clean_hash",lastJsonHash);
-      buildFilters();renderAll();
+      try{buildFilters()}catch(e){dbgErr("sync-filters: "+(e&&e.message||e))}renderAll();
       toast(t("fbLive"));
     },()=>{fbConnected=false;updateSyncPill()});
     fbMode=true;fbConnected=true;updateSyncPill();
@@ -1037,10 +1038,10 @@ async function gLoad(silent){
     const n=normalizeData(d);
     if(hashObj(n)===localH){if(d.updatedAt)jsonUpdatedAt=d.updatedAt;lastJsonHash=localH;localStorage.setItem("lc_clean_hash",localH);updateSyncPill();return "ok"}
     if(localH!==clean){updateSyncPill();if(!silent)toast(t("fbConflict"));return "conflict"}
-    staff=n.staff;leaves=n.leaves;holidays=n.holidays;saveAll();
+    staff=n.staff;leaves=n.leaves;holidays=n.holidays;schedules=n.schedules;saveAll();
     jsonUpdatedAt=d.updatedAt||null;
     lastJsonHash=dataHash();localStorage.setItem("lc_clean_hash",lastJsonHash);
-    buildFilters();renderAll();
+    try{buildFilters()}catch(e){dbgErr("sync-filters: "+(e&&e.message||e))}renderAll();
     toast(silent?t("fbLive"):t("syncOk"));
     return "ok";
   }catch(e){updateSyncPill();if(!silent)toast(t("jsonFail"));return "fail"}
@@ -1133,7 +1134,7 @@ function fbDownload(){if(!isAdmin)return noPerm();
 function fbPushNow(){if(!isAdmin)return noPerm();if((!fbMode||!fbRef)&&!gMode)return toast(t("fbTestFail"));cloudPush();toast(t("fbPushed"))}
 function fbToggleDevice(){if(document.getElementById("fbUse").checked)localStorage.removeItem("lc_fb_off");else localStorage.setItem("lc_fb_off","1");location.reload()}
 
-try{applyLang()}catch(e){console.error("boot",e);try{renderAll()}catch(_){}}try{syncAdminUI()}catch(e){console.error("boot",e)}try{bootSync()}catch(e){console.error("boot",e)}
+try{applyLang()}catch(e){console.error("boot",e);dbgErr("boot: "+(e&&e.message||e));try{renderAll()}catch(_){}}try{syncAdminUI()}catch(e){console.error("boot",e);dbgErr("boot-admin: "+(e&&e.message||e))}try{bootSync()}catch(e){console.error("boot",e);dbgErr("boot-sync: "+(e&&e.message||e))}
 </script>
 </body>
 </html>
