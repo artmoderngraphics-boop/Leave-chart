@@ -1,7 +1,7 @@
 {
   "app": "leave-chart",
   "version": 1,
-  "updatedAt": "2026-09-16T07:36:55.057Z",
+  "updatedAt": "2026-09-16T09:18:05.000Z",
   "staff": [
     "Zameer",
     "Jamil",
@@ -16,7 +16,7 @@
   ],
   "leaves": [
     {
-      "id": "L1789541343738",
+      "id": "R01",
       "name": "Sajeewan",
       "from": "2026-09-14",
       "to": "2026-09-19",
@@ -24,10 +24,10 @@
       "type": "family",
       "reason": "Home",
       "status": "approved",
-      "created": 1789541343738
+      "created": 1789550285856
     },
     {
-      "id": "L1789541631746",
+      "id": "R02",
       "name": "Amjet",
       "from": "2026-09-11",
       "to": "2026-09-12",
@@ -35,10 +35,10 @@
       "type": "family",
       "reason": "Home",
       "status": "approved",
-      "created": 1789541631746
+      "created": 1789550286856
     },
     {
-      "id": "L1789541731714",
+      "id": "R03",
       "name": "Anuradha",
       "from": "2026-09-19",
       "to": "2026-09-19",
@@ -46,7 +46,7 @@
       "type": "family",
       "reason": "Medicine",
       "status": "approved",
-      "created": 1789541731714
+      "created": 1789550287856
     }
   ],
   "holidays": [
