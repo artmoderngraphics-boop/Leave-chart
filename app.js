@@ -20,7 +20,7 @@ si:["ජනවාරි","පෙබරවාරි","මාර්තු","අප
 ta:["ஜனவரி","பிப்ரவரி","மார்ச்","ஏப்ரல்","மே","ஜூன்","ஜூலை","ஆகஸ்ட்","செப்டம்பர்","அக்டோபர்","நவம்பர்","டிசம்பர்"]};
 
 /* ============ DATA ============ */
-const DEFAULT_STAFF = ["Zameer","Jamil","Amjet","Akram","Manoj","Sajeewan","Praweena","Darshan","Fazha","Anuradha"];
+const DEFAULT_STAFF = ["Zameer","Jamil","Amjet","Akram","Manoj","Sajeewan","Praveen","Darshan","Fazha","Anuradha"];
 const SEED = [{"id": "R01", "name": "Sajeewan", "from": "2026-09-14", "to": "2026-09-19", "days": 6, "type": "family", "reason": "Home", "status": "approved", "created": 1789550285856}, {"id": "R02", "name": "Amjet", "from": "2026-09-11", "to": "2026-09-12", "days": 2, "type": "family", "reason": "Home", "status": "approved", "created": 1789550286856}, {"id": "R03", "name": "Anuradha", "from": "2026-09-19", "to": "2026-09-19", "days": 1, "type": "family", "reason": "Medicine", "status": "approved", "created": 1789550287856}];
 SEED.forEach(s=>{s.days=diffDays(s.from,s.to);s.created=Date.now()});
 
@@ -488,6 +488,8 @@ function fbInit(){
     fbRef.on("value",snap=>{
       const d=snap.val();
       if(!d||!validData(d))return;
+      if(d.updatedAt&&jsonUpdatedAt&&d.updatedAt<jsonUpdatedAt){updateSyncPill();return}
+      if(d.leaves.length===0&&(staff.length>0||leaves.length>0)){updateSyncPill();return}
       const clean=localStorage.getItem("lc_clean_hash")||"";
       const localH=dataHash();
       const n=normalizeData(d);
@@ -514,6 +516,8 @@ async function gLoad(silent){
     if(!r.ok)throw 0;
     const d=await r.json();
     if(!d||d.ok!==true||!validData(d))throw 0;
+    if(d.updatedAt&&jsonUpdatedAt&&d.updatedAt<jsonUpdatedAt){updateSyncPill();return "skipped"}
+    if(d.leaves.length===0&&(staff.length>0||leaves.length>0)){updateSyncPill();return "skipped"}
     const clean=localStorage.getItem("lc_clean_hash")||"";
     const localH=dataHash();
     const n=normalizeData(d);
